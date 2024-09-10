@@ -9,7 +9,9 @@
     </a>
 </p>
 
-**ProTaskinate** is a project management tool (like Jira) designed to help teams efficiently manage tasks, projects, and deadlines.
+<p align="center">
+<strong>ProTaskinate</strong> is a project management tool (like Jira) designed to help teams efficiently manage tasks, projects, and deadlines.
+</p>
 
 ## Key Features:
 - **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
