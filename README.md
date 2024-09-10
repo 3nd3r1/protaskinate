@@ -1,4 +1,4 @@
-# ProTaskinate
+<h1 align="center">ProTaskinate</h1>
 
 <p align="center">
     <a href="https://codecov.io/gh/3nd3r1/protaskinate" > 
