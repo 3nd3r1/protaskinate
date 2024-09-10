@@ -1,0 +1,11 @@
+# Postgres data for docker-compose
+.postgres-data/
+
+# Python cache
+**/__pycache__/
+.pytest_cache/
+
+# pytest-cov
+htmlcov/
+.coverage
+coverage.xml

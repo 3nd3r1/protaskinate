@@ -1,0 +1,3 @@
+[run]
+source = protaskinate
+omit = protaskinate/**/__init__.py,protaskinate/index.py,protaskinate/app.py,protaskinate/routes/**,protaskinate/utils/database.py

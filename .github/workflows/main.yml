@@ -1,0 +1,27 @@
+---
+name: CI
+on: push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    container: python:3.10
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run linting
+        run: poetry run invoke lint
+
+      - name: Run unit-tests and collect coverage
+        run: poetry run pytest --cov-report xml --cov protaskinate tests/unit
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
