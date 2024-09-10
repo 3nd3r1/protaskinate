@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="card">
+    <header class="card-header">
+        <h2 class="card-header-title is-centered">Login</h2>
+    </header>
+    <div class="card-content">
+        {% if error %}
+        <div class="notification is-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+        <form method="POST" action="/login">
+            <div class="field">
+                <label for="username" class="label">Username:</label>
+                <input type="text" id="username" name="username" placeholder="testitestinen" required class="input">
+            </div>
+            <div class="field">
+                <label for="password" class="label">Password:</label>
+                <input type="password" id="password" name="password" placeholder="salasana123" required class="input">
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
