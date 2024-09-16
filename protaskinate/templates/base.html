@@ -6,17 +6,38 @@
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
         >
+        <style>
+            :root {
+                --background-offset: 1%;
+            }
+        </style>
 	</head>
 	<body>
-        <section class="hero">
-            <div class="hero-body">
-                <div class="container has-text-centered">
-                    <p class="title">ProTaskinate</p>
-                </div>
+        <div class="is-flex">
+            <div style="flex-basis: 25%; heih">
+                <aside class="menu p-4" style="height: 100vh; background-color: hsl(var(--bulma-scheme-h),var(--bulma-scheme-s),calc(var(--bulma-scheme-main-l) + var(--background-offset)))">
+                    <h1 class="title">ProTaskinate</h1>
+                    {% if session["user_id"] %}
+                    <p class="menu-label">
+                        General
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="/dashboard">Dashboard</a></li>
+                    </ul>
+                    <p class="menu-label">User</p>
+                    <ul class="menu-list">
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                    {% endif %}
+                </aside>
             </div>
-        </section>
-        <div class="block container">
-            {% block content %}{% endblock %}
+            <div class="is-flex-grow-1">
+                <section class="section column">
+                    <div class="container">
+                    {% block content %}{% endblock %}
+                    </div>
+                </section>
+            </div>
         </div>
 	</body>
 </html>
