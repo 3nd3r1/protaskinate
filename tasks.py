@@ -7,8 +7,9 @@ from invoke.tasks import task
 
 
 @task
-def debug(ctx):
-    """Run the project in debug mode."""
+def dev(ctx):
+    """Run the project in development mode."""
+    print("Running Protaskinate in development mode")
     if sys.platform.startswith("win"):
         ctx.run("py protaskinate/index.py")
     else:
@@ -41,16 +42,19 @@ def generate_secret_key(ctx):
 @task
 def lint(ctx):
     """Run pylint on the project."""
+    print("Linting project")
     ctx.run("pylint protaskinate", warn=True)
 
 
 @task
 def unit_test(ctx):
     """Run unit tests"""
+    print("Running unit tests")
     ctx.run("pytest tests/unit")
 
 
 @task
 def coverage_report(ctx):
     """Run unit tests and create a coverage report"""
+    print("Running unit tests and creating coverage report")
     ctx.run("pytest --cov-report xml --cov protaskinate tests/unit")
