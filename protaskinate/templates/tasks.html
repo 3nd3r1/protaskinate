@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+<h2 class="title">Tasks</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+        <tr data-task-id="{{task.id}}">
+            <td class="is-align-content-center">{{ task.title }}</td>
+            <td>
+                <div class="select">
+                    <select class="task-status-select" data-task-id="{{ task.id }}">
+                        <option value="open" {% if task.status == 'open' %}selected{% endif %}>Open</option>
+                        <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                        <option value="done" {% if task.status == 'done' %}selected{% endif %}>Done</option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.task-status-select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            const taskId = this.getAttribute('data-task-id');
+            const newStatus = this.value;
+
+            fetch(`/tasks/`+taskId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ taskId: taskId, status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Task status updated successfully');
+                } else {
+                    console.error('Error updating task status');
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
