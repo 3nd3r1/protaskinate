@@ -1,5 +1,6 @@
 """tasks.py"""
 
+import os
 import sys
 
 from invoke.tasks import task
@@ -25,6 +26,18 @@ def populate_db(ctx):
     """Populate the database with sample data."""
     print("Populating database")
     ctx.run("flask populate_db")
+
+
+@task
+def generate_secret_key(ctx):
+    """Create a secret key."""
+    if os.path.exists(".secret_key.env"):
+        print("File already exists - skipping generation")
+    else:
+        secret_key = os.urandom(12).hex()
+        ctx.run("echo 'SECRET_KEY="+secret_key+"' > .secret_key.env")
+        print("Secret key generated")
+
 @task
 def lint(ctx):
     """Run pylint on the project."""
