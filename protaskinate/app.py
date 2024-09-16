@@ -65,9 +65,16 @@ def create_schema():
 def populate_db():
     """ Populate the database with sample data """
     logging.info("Populating database")
-    sql = """
+    sql_users = """
     INSERT INTO users (username, password) VALUES (:username, :password);
     """
+    sql_tasks = """
+    INSERT INTO tasks (title, status, creator_id) VALUES
+    ('Task 1', 'open', 1),
+    ('Task 2', 'in_progress', 1),
+    ('Task 3', 'done', 1);
+    """
     with db.engine.connect() as conn:
-        conn.execute(text(sql), {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_users), {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_tasks))
         conn.commit()
