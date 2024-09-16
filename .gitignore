@@ -1,6 +1,9 @@
 # Postgres data for docker-compose
 .postgres-data/
 
+# Secret key
+.secret_key.env
+
 # Python cache
 **/__pycache__/
 .pytest_cache/
