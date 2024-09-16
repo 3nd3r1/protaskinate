@@ -21,6 +21,11 @@ def create_schema(ctx):
 
 
 @task
+def populate_db(ctx):
+    """Populate the database with sample data."""
+    print("Populating database")
+    ctx.run("flask populate_db")
+@task
 def lint(ctx):
     """Run pylint on the project."""
     ctx.run("pylint protaskinate", warn=True)
