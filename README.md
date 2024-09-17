@@ -15,6 +15,8 @@
 
 <p align="center">
     <a href="https://protaskinate-page.host.ender.fi/">Live Demo</a>
+    .
+    <a href="https://github.com/3nd3r1/protaskinate/releases/latest">Latest Release</a>
 </p>
 
 ## Key Features:
