@@ -1,7 +1,6 @@
 """tasks.py"""
 
 import os
-import sys
 
 from invoke.tasks import task
 
@@ -10,10 +9,7 @@ from invoke.tasks import task
 def dev(ctx):
     """Run the project in development mode."""
     print("Running Protaskinate in development mode")
-    if sys.platform.startswith("win"):
-        ctx.run("py protaskinate/index.py")
-    else:
-        ctx.run("python3 protaskinate/index.py")
+    ctx.run("flask run --debug --host=0.0.0.0")
 
 
 @task

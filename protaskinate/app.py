@@ -20,10 +20,14 @@ def create_app():
     """ Create the Flask app """
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-            "DATABASE_URL",
-            "postgresql://postgres:postgres@localhost:5432/protaskinate")
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(12).hex())
+    # If DATABASE_URL or SECRET_KEY not set throw error
+    if not os.environ.get("DATABASE_URL"):
+        raise ValueError("DATABASE_URL environment variable is not set")
+    if not os.environ.get("SECRET_KEY"):
+        raise ValueError(("Please generate a secret_key with "
+                          "`poetry run invoke generate-secret-key`"))
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["PORT"] = os.environ.get("PORT", 5000)
     app.config["DEBUG"] = os.environ.get("DEBUG", False)
 
