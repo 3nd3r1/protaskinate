@@ -9,6 +9,6 @@
 		"COPY ./ /usr/src/app",
 		"RUN poetry install --without dev",
 		"EXPOSE 80",
-		"CMD poetry run flask create-schema"
+		"CMD poetry run flask create_schema"
 	]
 }
