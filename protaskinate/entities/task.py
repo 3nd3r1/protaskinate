@@ -1,8 +1,9 @@
 """protaskinate/entities/task.py"""
 
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from dataclasses import dataclass
+
 
 class TaskStatus(Enum):
     """Enumeration representing the status of a task"""
@@ -16,6 +17,28 @@ class TaskPriority(Enum):
     MEDIUM = "medium"
     HIGH = "high"
     VERY_HIGH = "very_high"
+
+    def as_int(self):
+        """Return the integer value of the priority"""
+        if self == TaskPriority.LOW:
+            return 0
+        if self == TaskPriority.MEDIUM:
+            return 1
+        if self == TaskPriority.HIGH:
+            return 2
+        return 3
+
+    def __lt__(self, other):
+        return self.as_int() < other.as_int()
+
+    def __le__(self, other):
+        return self.as_int() <= other.as_int()
+
+    def __gt__(self, other):
+        return self.as_int() > other.as_int()
+
+    def __ge__(self, other):
+        return self.as_int() >= other.as_int()
 
 @dataclass
 class Task:
