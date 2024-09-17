@@ -13,6 +13,10 @@
 <strong>ProTaskinate</strong> is a project management tool (like Jira) designed to help teams efficiently manage tasks, projects, and deadlines.
 </p>
 
+<p align="center">
+    <a href="https://protaskinate-page.host.ender.fi/">Live Demo</a>
+</p>
+
 ## Key Features:
 - **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
 - **Kanban Board**: Visualize and manage tasks across different stages (To Do, In Progress, Done).
@@ -26,3 +30,49 @@
 - **Backend**: Flask (Python)
 - **Database**: PostgreSQL
 - **Frontend**: HTML/CSS/JavaScript
+
+## Running Locally:
+
+### With Docker:
+1. Clone the repository:
+```bash
+git clone https://github.com/3nd3r1/protaskinate.git
+cd protaskinate
+```
+2. Run docker-compose:
+```bash
+docker compose up
+```
+
+### Without Docker:
+1. Clone the repository:
+```bash
+git clone https://github.com/3nd3r1/protaskinate.git
+cd protaskinate
+```
+2. Install dependencies:
+```bash
+poetry install
+```
+
+3. Update the `.env` file with your database credentials:
+4. Generate a secret key:
+```bash
+poetry run invoke generate-secret-key
+```
+5. Create schema and populate the database:
+```bash
+poetry run invoke create-schema
+peotry run invoke populate-db
+```
+6. Run the application in development mode:
+```bash
+poetry run invoke dev
+```
+7. Open your browser and navigate to `http://localhost:5000`
+
+## Weekly Report
+
+### Välipalautus 2 - 2024-09-17
+
+The project is progressing well. Testing has not yet been started so the coverage is poor. The project has a good structure and the code is clean. Many core features have been completed, more information can be found in the [changelog](docs/changelog.md). The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
