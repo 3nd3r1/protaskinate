@@ -51,4 +51,13 @@ class TaskRepository:
         db.session.execute(text(sql), {"task_id": task_id, **filtered_kwargs})
         db.session.commit()
 
+    def create(self, **kwargs):
+        """Create a task in the repository"""
+        sql = """
+            INSERT INTO tasks (title, status, creator_id, created_at, priority)
+            VALUES (:title, :status, :creator_id, :created_at, :priority)
+        """
+        db.session.execute(text(sql), kwargs)
+        db.session.commit()
+
 task_repository = TaskRepository()

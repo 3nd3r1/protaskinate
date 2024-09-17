@@ -1,28 +1,46 @@
 """protaskinate/routes/tasks.py"""
 
-from flask import Blueprint, redirect, request, render_template, session, jsonify
+from datetime import datetime
 
-from protaskinate.services import task_service
+from flask import Blueprint, redirect, render_template, request, session
+
+from protaskinate.services import task_service, user_service
 
 blueprint = Blueprint("tasks", __name__)
 
-@blueprint.route("/tasks", methods=["GET"])
+@blueprint.route("/tasks", methods=["GET", "POST"])
 def tasks_route():
     """Render the tasks page"""
     if not session.get("user_id"):
         return redirect("/")
-    return render_template("tasks.html", tasks=task_service.get_all())
 
-@blueprint.route("/tasks/<int:task_id>", methods=["PUT"])
+    if request.method == "POST":
+        data = request.form
+        if not data:
+            return redirect("/tasks")
+        task_service.create(**data, creator_id=session["user_id"],
+                            created_at=datetime.now().isoformat())
+        return redirect("/tasks")
+
+    if request.method == "GET":
+        tasks = task_service.get_all(order_by_fields=["priority", "created_at"],
+                                     reverse=[True, False])
+        users_dict = {user.id: user for user in user_service.get_all()}
+        return render_template("tasks.html", tasks=tasks, users_dict=users_dict)
+
+    return redirect("/tasks")
+
+@blueprint.route("/tasks/<int:task_id>", methods=["POST"])
 def update_task_route(task_id):
     """Update the task"""
     if not session.get("user_id"):
-        return jsonify({"error": "Unauthorized"}), 401
+        return redirect("/")
 
-    data = request.json
+    data = request.form
     if not data:
-        return jsonify({"error": "No data provided"}), 400
+        return redirect("/tasks")
 
-    task_service.update(task_id, status=data["status"])
 
-    return jsonify({"success": True})
+    task_service.update(task_id, **data)
+
+    return redirect("/tasks")

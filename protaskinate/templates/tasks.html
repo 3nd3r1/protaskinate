@@ -1,53 +1,105 @@
 {% extends "base.html" %}
 {% block title %}Tasks{% endblock %}
 {% block content %}
-<h2 class="title">Tasks</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for task in tasks %}
-        <tr data-task-id="{{task.id}}">
-            <td class="is-align-content-center">{{ task.title }}</td>
-            <td>
-                <div class="select">
-                    <select class="task-status-select" data-task-id="{{ task.id }}">
-                        <option value="open" {% if task.status.value == 'open' %}selected{% endif %}>Open</option>
-                        <option value="in_progress" {% if task.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
-                        <option value="done" {% if task.status.value == 'done' %}selected{% endif %}>Done</option>
-                    </select>
+<h2 class="title is-2">Tasks</h2>
+<div>
+    <div class="container mb-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Created At</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for task in tasks %}
+                <tr data-task-id="{{task.id}}">
+                    <td class="is-align-content-center">{{ task.title }}</td>
+                    <td>
+                        <form method="POST" action="/tasks/{{ task.id }}">
+                            <div class="select">
+                                <select class="task-status-select" data-task-id="{{ task.id }}" name="status">
+                                    <option value="open" {% if task.status.value == 'open' %}selected{% endif %}>Open</option>
+                                    <option value="in_progress" {% if task.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                    <option value="done" {% if task.status.value == 'done' %}selected{% endif %}>Done</option>
+                                </select>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="/tasks/{{ task.id }}">
+                            <div class="select">
+                                <select class="task-priority-select" data-task-id="{{ task.id }}" name="priority">
+                                    <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Low</option>
+                                    <option value="medium" {% if task.priority.value == 'medium' %}selected{% endif %}>Medium</option>
+                                    <option value="high" {% if task.priority.value == 'high' %}selected{% endif %}>High</option>
+                                    <option value="very_high" {% if task.priority.value == 'very_high' %}selected{% endif %}>Very High</option>
+                                </select>
+                            </div>
+                        </form>
+                    </td>
+                    <td class="is-align-content-center">{{ task.created_at }}</td>
+                    <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h2 class="title is-2">Create Task</h2>
+        <form method="POST" action="/tasks">
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    <input class="input" type="text" name="title" required>
                 </div>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            </div>
+            <div class="field">
+                <label class="label">Status</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="status">
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Priority</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="very_high">Very High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-link">Create Task</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.task-status-select').forEach(function(selectElement) {
         selectElement.addEventListener('change', function() {
-            const taskId = this.getAttribute('data-task-id');
-            const newStatus = this.value;
-
-            fetch(`/tasks/`+taskId, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ taskId: taskId, status: newStatus })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Task status updated successfully');
-                } else {
-                    console.error('Error updating task status');
-                }
-            });
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll('.task-priority-select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            this.form.submit();
         });
     });
 });

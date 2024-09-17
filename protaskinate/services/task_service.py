@@ -18,4 +18,8 @@ class TaskService:
         """Update the task"""
         task_repository.update(task_id, **kwargs)
 
+    def create(self, **kwargs):
+        """Create a task"""
+        task_repository.create(**kwargs)
+
 task_service = TaskService()
