@@ -80,6 +80,7 @@ def populate_db():
     ('Task 3', 'done', 1, '2021-01-03', 'very_high');
     """
     with db.engine.connect() as conn:
-        conn.execute(text(sql_users), {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_users),
+                     {"username": "admin", "password": generate_password_hash("admin")})
         conn.execute(text(sql_tasks))
         conn.commit()
