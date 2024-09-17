@@ -34,4 +34,12 @@ class UserRepository:
             return False
         return check_password_hash(row[0], password)
 
+    def get_all(self) -> list[User]:
+        """Get all users"""
+        sql = """SELECT id, username
+                  FROM users"""
+        result = db.session.execute(text(sql))
+        rows = result.fetchall()
+        return [User(id=row[0], username=row[1]) for row in rows]
+
 user_repository = UserRepository()
