@@ -74,10 +74,10 @@ def populate_db():
     INSERT INTO users (username, password) VALUES (:username, :password);
     """
     sql_tasks = """
-    INSERT INTO tasks (title, status, creator_id) VALUES
-    ('Task 1', 'open', 1),
-    ('Task 2', 'in_progress', 1),
-    ('Task 3', 'done', 1);
+    INSERT INTO tasks (title, status, creator_id, created_at, priority) VALUES
+    ('Task 1', 'open', 1, '2021-01-01', 'low'),
+    ('Task 2', 'in_progress', 1, '2021-01-02', 'high'),
+    ('Task 3', 'done', 1, '2021-01-03', 'very_high');
     """
     with db.engine.connect() as conn:
         conn.execute(text(sql_users), {"username": "admin", "password": generate_password_hash("admin")})

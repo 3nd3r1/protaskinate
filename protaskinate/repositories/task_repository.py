@@ -14,11 +14,16 @@ class TaskRepository:
 
     def get_all(self) -> List[Task]:
         """Get all tasks from the repository"""
-        sql = """SELECT id, title, status, creator_id
+        sql = """SELECT id, title, status, creator_id, created_at, priority
                  FROM tasks"""
         result = db.session.execute(text(sql))
         row = result.fetchall()
-        return [Task(task_id=row[0], title=row[1], status=row[2], creator_id=row[3]) for row in row]
+        return [Task(id=row[0],
+                     title=row[1],
+                     status=row[2],
+                     creator_id=row[3],
+                     created_at=row[4],
+                     priority=row[5]) for row in row]
 
     def update(self, task_id: int, **kwargs):
         """Update the task in the repository"""

@@ -21,7 +21,7 @@ class UserRepository:
         row = result.fetchone()
         if row is None:
             return None
-        return User(user_id=row[0], username=row[1])
+        return User(id=row[0], username=row[1])
 
     def verify_password(self, username: str, password: str) -> bool:
         """Verify a password against a password hash"""

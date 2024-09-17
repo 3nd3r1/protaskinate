@@ -1,6 +1,8 @@
 """protaskinate/entities/task.py"""
 
+from datetime import datetime
 from enum import Enum
+from dataclasses import dataclass
 
 class TaskStatus(Enum):
     """Enumeration representing the status of a task"""
@@ -8,11 +10,44 @@ class TaskStatus(Enum):
     IN_PROGRESS = "in_progress"
     DONE = "done"
 
+class TaskPriority(Enum):
+    """Enumeration representing the priority of a task"""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    VERY_HIGH = "very_high"
+
+@dataclass
 class Task:
     """Class representing a task"""
+    id: int
+    title: str
+    status: TaskStatus
+    creator_id: int
+    created_at: datetime
+    priority: TaskPriority
 
-    def __init__(self, task_id: int, status: TaskStatus, title: str, creator_id: int):
-        self.id = task_id
-        self.title = title
-        self.status = status
-        self.creator_id = creator_id
+    def __post_init__(self):
+        if not isinstance(self.id, int):
+            raise ValueError(f"Invalid id: {self.id}")
+
+        if not isinstance(self.title, str):
+            raise ValueError(f"Invalid title: {self.title}")
+
+        if not isinstance(self.status, TaskStatus):
+            try:
+                self.status = TaskStatus(self.status)
+            except ValueError as exc:
+                raise ValueError(f"Invalid status: {self.status}") from exc
+
+        if not isinstance(self.creator_id, int):
+            raise ValueError(f"Invalid creator_id: {self.creator_id}")
+
+        if not isinstance(self.created_at, datetime):
+            raise ValueError(f"Invalid created_at: {self.created_at}")
+
+        if not isinstance(self.priority, TaskPriority):
+            try:
+                self.priority = TaskPriority(self.priority)
+            except ValueError as exc:
+                raise ValueError(f"Invalid priority: {self.priority}") from exc

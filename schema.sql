@@ -2,8 +2,10 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
 DROP TYPE IF EXISTS task_status;
+DROP TYPE IF EXISTS task_priority;
 
 CREATE TYPE task_status AS ENUM ('open', 'in_progress', 'done');
+CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'very_high');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -21,5 +23,7 @@ CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title TEXT,
     status task_status,
-    creator_id INTEGER REFERENCES users
+    creator_id INTEGER REFERENCES users,
+    created_at TIMESTAMP,
+    priority task_priority
 );
