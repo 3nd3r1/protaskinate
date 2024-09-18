@@ -78,3 +78,9 @@ poetry run invoke dev
 ### Välipalautus 2 - 2024-09-17
 
 The project is progressing well. Testing has not yet been started so the coverage is poor. The project has a good structure and the code is clean. Many core features have been completed, more information can be found in the [changelog](docs/changelog.md). The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+
+For testing you can user the following credentials:
+- Username: admin
+- Password: admin
+
+PS. For some reason the production database is flaky, so if you encounter an internal server error, please just reload the page, it should work...
