@@ -9,22 +9,22 @@ CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'very_high');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
-    name TEXT,
-    creator_id SERIAL REFERENCES users(id) ON DELETE CASCADE
+    name TEXT NOT NULL,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
-    title TEXT,
-    status task_status,
-    creator_id SERIAL REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP,
-    priority task_priority,
-    assignee_id SERIAL REFERENCES users(id) ON DELETE SET NULL,
+    title TEXT NOT NULL,
+    status task_status NOT NULL,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    priority task_priority NOT NULL,
+    assignee_id INT REFERENCES users(id) ON DELETE SET NULL
 );
