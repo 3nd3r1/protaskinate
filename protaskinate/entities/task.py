@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 
 class TaskStatus(Enum):
@@ -49,6 +50,7 @@ class Task:
     creator_id: int
     created_at: datetime
     priority: TaskPriority
+    assignee_id: Optional[int]
 
     def __post_init__(self):
         if not isinstance(self.id, int):
@@ -74,3 +76,6 @@ class Task:
                 self.priority = TaskPriority(self.priority)
             except ValueError as exc:
                 raise ValueError(f"Invalid priority: {self.priority}") from exc
+
+        if not isinstance(self.assignee_id, int) and self.assignee_id is not None:
+            raise ValueError(f"Invalid assignee_id: {self.assignee_id}")
