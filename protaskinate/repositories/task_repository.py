@@ -41,8 +41,11 @@ class TaskRepository:
 
     def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task in the repository"""
-        allowed_attributes = ["title", "status", "priority"]
+        allowed_attributes = ["title", "status", "priority", "assignee_id"]
         filtered_kwargs = {key: value for key, value in kwargs.items() if key in allowed_attributes}
+        if not filtered_kwargs:
+            return None
+
         set_clause = ", ".join(f"{key} = :{key}" for key in filtered_kwargs.keys())
 
         sql = f"""
