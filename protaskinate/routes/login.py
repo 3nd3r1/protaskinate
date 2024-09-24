@@ -1,13 +1,13 @@
 """protaskinate/routes/login.py"""
 
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask_login import login_user, current_user
+from flask_login import login_user
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired
 
 from protaskinate.services import user_service
-from protaskinate.utils.login_manager import lm
+from protaskinate.utils.login_manager import lm, login_redirect
 
 blueprint = Blueprint("login", __name__)
 
@@ -19,12 +19,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 @blueprint.route("/login", methods=["GET", "POST"])
+@login_redirect
 def login_route():
     """Render the login page"""
     form = LoginForm(request.form)
-
-    if current_user.is_authenticated:
-        return redirect(url_for("dashboard.dashboard_route"))
 
     if request.method == "POST" and form.validate_on_submit():
         username = form.username.data
