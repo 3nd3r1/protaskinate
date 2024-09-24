@@ -51,6 +51,7 @@ class Task:
     created_at: datetime
     priority: TaskPriority
     assignee_id: Optional[int]
+    deadline: Optional[datetime]
 
     def __post_init__(self):
         if not isinstance(self.id, int):
@@ -79,3 +80,6 @@ class Task:
 
         if not isinstance(self.assignee_id, int) and self.assignee_id is not None:
             raise ValueError(f"Invalid assignee_id: {self.assignee_id}")
+
+        if not isinstance(self.deadline, datetime) and self.deadline is not None:
+            raise ValueError(f"Invalid deadline: {self.deadline}")
