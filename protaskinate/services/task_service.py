@@ -1,6 +1,6 @@
 """protaskinate/services/task_service.py"""
 
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from protaskinate.entities import Task
 from protaskinate.repositories import task_repository
@@ -14,12 +14,12 @@ class TaskService:
         """Get all tasks"""
         return task_repository.get_all(order_by_fields, reverse)
 
-    def update(self, task_id: int, **kwargs):
+    def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task"""
-        task_repository.update(task_id, **kwargs)
+        return task_repository.update(task_id, **kwargs)
 
-    def create(self, **kwargs):
+    def create(self, **kwargs) -> Optional[Task]:
         """Create a task"""
-        task_repository.create(**kwargs)
+        return task_repository.create(**kwargs)
 
 task_service = TaskService()
