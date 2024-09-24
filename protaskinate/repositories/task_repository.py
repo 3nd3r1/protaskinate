@@ -26,7 +26,7 @@ class TaskRepository:
                 for field, reverse in zip(order_by_fields, reverse)
                 if field in allowed_attributes)
 
-        sql = f"""SELECT id, title, status, creator_id, created_at, priority
+        sql = f"""SELECT id, title, status, creator_id, created_at, priority, assignee_id
                  FROM tasks ORDER BY {order_clause}"""
 
         result = db.session.execute(text(sql))
@@ -36,7 +36,8 @@ class TaskRepository:
                      status=row[2],
                      creator_id=row[3],
                      created_at=row[4],
-                     priority=row[5]) for row in row]
+                     priority=row[5],
+                     assignee_id=row[6]) for row in row]
 
     def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task in the repository"""
@@ -48,7 +49,7 @@ class TaskRepository:
             UPDATE tasks
             SET {set_clause}
             WHERE id = :task_id
-            RETURNING id, title, status, creator_id, created_at, priority
+            RETURNING id, title, status, creator_id, created_at, priority, assignee_id
         """
 
         result = db.session.execute(text(sql), {"task_id": task_id, **filtered_kwargs})
@@ -61,18 +62,20 @@ class TaskRepository:
                     status=row[2],
                     creator_id=row[3],
                     created_at=row[4],
-                    priority=row[5])
+                    priority=row[5],
+                    assignee_id=row[6])
 
     def create(self, **kwargs) -> Optional[Task]:
         """Create a new task"""
-        required_attributes = ["title", "status", "creator_id", "created_at", "priority"]
+        required_attributes = ["title", "status", "creator_id",
+                               "created_at", "priority", "assignee_id"]
         if not all(key in kwargs for key in required_attributes):
             raise ValueError("Missing required attributes")
 
         sql = """
-            INSERT INTO tasks (title, status, creator_id, created_at, priority)
-            VALUES (:title, :status, :creator_id, :created_at, :priority)
-            RETURNING id, title, status, creator_id, created_at, priority
+            INSERT INTO tasks (title, status, creator_id, created_at, priority, assignee_id)
+            VALUES (:title, :status, :creator_id, :created_at, :priority, :assignee_id)
+            RETURNING id, title, status, creator_id, created_at, priority, assignee_id
         """
 
         result = db.session.execute(text(sql), kwargs)
@@ -86,6 +89,7 @@ class TaskRepository:
                     status=row[2],
                     creator_id=row[3],
                     created_at=row[4],
-                    priority=row[5])
+                    priority=row[5],
+                    assignee_id=row[6])
 
 task_repository = TaskRepository()
