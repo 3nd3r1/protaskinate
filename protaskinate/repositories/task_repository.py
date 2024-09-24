@@ -1,7 +1,7 @@
 """protaskinate/repositories/task_repository.py"""
 
 
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from sqlalchemy import text
 
@@ -13,8 +13,8 @@ class TaskRepository:
     """Class representing a repository for tasks"""
 
     def get_all(self,
-                order_by_fields: List[Literal["title", "created_at", "priority"]] | None = None,
-                reverse: list[bool] | None = None) -> List[Task]:
+                order_by_fields: Optional[List[Literal["title", "created_at", "priority"]]],
+                reverse: Optional[list[bool]]) -> List[Task]:
         """Get all tasks from the repository"""
         if order_by_fields is None or reverse is None:
             order_by_fields = ["created_at"]
@@ -38,26 +38,54 @@ class TaskRepository:
                      created_at=row[4],
                      priority=row[5]) for row in row]
 
-    def update(self, task_id: int, **kwargs):
+    def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task in the repository"""
         allowed_attributes = ["title", "status", "priority"]
         filtered_kwargs = {key: value for key, value in kwargs.items() if key in allowed_attributes}
         set_clause = ", ".join(f"{key} = :{key}" for key in filtered_kwargs.keys())
+
         sql = f"""
             UPDATE tasks
             SET {set_clause}
             WHERE id = :task_id
+            RETURNING id, title, status, creator_id, created_at, priority
         """
-        db.session.execute(text(sql), {"task_id": task_id, **filtered_kwargs})
-        db.session.commit()
 
-    def create(self, **kwargs):
-        """Create a task in the repository"""
+        result = db.session.execute(text(sql), {"task_id": task_id, **filtered_kwargs})
+        row = result.fetchone()
+        db.session.commit()
+        if row is None:
+            return None
+        return Task(id=row[0],
+                    title=row[1],
+                    status=row[2],
+                    creator_id=row[3],
+                    created_at=row[4],
+                    priority=row[5])
+
+    def create(self, **kwargs) -> Optional[Task]:
+        """Create a new task"""
+        required_attributes = ["title", "status", "creator_id", "created_at", "priority"]
+        if not all(key in kwargs for key in required_attributes):
+            raise ValueError("Missing required attributes")
+
         sql = """
             INSERT INTO tasks (title, status, creator_id, created_at, priority)
             VALUES (:title, :status, :creator_id, :created_at, :priority)
+            RETURNING id, title, status, creator_id, created_at, priority
         """
-        db.session.execute(text(sql), kwargs)
+
+        result = db.session.execute(text(sql), kwargs)
+        row = result.fetchone()
         db.session.commit()
+
+        if row is None:
+            return None
+        return Task(id=row[0],
+                    title=row[1],
+                    status=row[2],
+                    creator_id=row[3],
+                    created_at=row[4],
+                    priority=row[5])
 
 task_repository = TaskRepository()
