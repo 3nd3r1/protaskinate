@@ -3,7 +3,7 @@
 from typing import Optional
 
 from sqlalchemy import text
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from protaskinate.entities import User
 from protaskinate.utils.database import db
@@ -53,5 +53,24 @@ class UserRepository:
             return False
         return check_password_hash(row[0], password)
 
+    def create(self, **kwargs) -> Optional[User]:
+        """Create a new user"""
+        required_fields = ["username", "password"]
+        if not all(field in kwargs for field in required_fields):
+            raise ValueError("Missing required fields")
+
+        sql = """INSERT INTO users (username, password)
+                 VALUES (:username, :password)
+                 RETURNING id, username"""
+
+        result = db.session.execute(text(sql),
+                                    {"username": kwargs["username"],
+                                     "password": generate_password_hash(kwargs["password"])})
+        row = result.fetchone()
+        db.session.commit()
+
+        if row is None:
+            return None
+        return User(id=row[0], username=row[1])
 
 user_repository = UserRepository()
