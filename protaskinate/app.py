@@ -9,7 +9,7 @@ from flask.cli import load_dotenv, with_appcontext
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
-from protaskinate.routes import dashboard, login, logout, tasks, register
+from protaskinate.routes import dashboard, login, logout, register, tasks
 from protaskinate.utils.database import db
 from protaskinate.utils.login_manager import lm
 
@@ -28,6 +28,10 @@ def create_app():
         raise ValueError(("Please generate a secret_key with "
                           "`poetry run invoke generate-secret-key`"))
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["PORT"] = os.environ.get("PORT", 5000)
     app.config["DEBUG"] = os.environ.get("DEBUG", False)
