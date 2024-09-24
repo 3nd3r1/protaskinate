@@ -11,18 +11,25 @@
             {{ error }}
         </div>
         {% endif %}
-        <form method="POST" action="/login">
+        <form method="POST">
+            {{  form.hidden_tag() }}
             <div class="field">
-                <label for="username" class="label">Username:</label>
-                <input type="text" id="username" name="username" placeholder="testitestinen" required class="input">
+                {{ form.username.label(class="label") }}
+                {{ form.username(class="input") }}
+                {% for error in form.username.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
             </div>
             <div class="field">
-                <label for="password" class="label">Password:</label>
-                <input type="password" id="password" name="password" placeholder="salasana123" required class="input">
+                {{ form.password.label(class="label") }}
+                {{ form.password(class="input") }}
+                {% for error in form.password.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
             </div>
             <div class="field">
                 <div class="control">
-                    <button type="submit" class="button">Login</button>
+                    {{  form.submit(class="button") }}
                 </div>
             </div>
         </form>

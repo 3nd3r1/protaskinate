@@ -1,13 +1,13 @@
 """protaskinate/routes/dashboard.py"""
 
-from flask import Blueprint, redirect, render_template, session
+from flask import Blueprint, render_template
+from flask_login import login_required
 
 blueprint = Blueprint("dashboard", __name__)
 
 @blueprint.route("/")
 @blueprint.route("/dashboard", methods=["GET"])
-def dashboard_router():
+@login_required
+def dashboard_route():
     """Render the dashboard page"""
-    if not session.get("user_id"):
-        return redirect("/login")
     return render_template("dashboard.html")

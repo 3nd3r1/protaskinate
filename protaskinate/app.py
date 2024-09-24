@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash
 
 from protaskinate.routes import dashboard, login, logout, tasks
 from protaskinate.utils.database import db
+from protaskinate.utils.login_manager import lm
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.secret_key.env"))
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
@@ -34,6 +35,7 @@ def create_app():
     logging.basicConfig(level=logging.DEBUG if app.config["DEBUG"] else logging.INFO)
 
     db.init_app(app)
+    lm.init_app(app)
 
     app.cli.add_command(create_schema)
     app.cli.add_command(populate_db)

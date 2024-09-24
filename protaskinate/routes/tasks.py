@@ -3,16 +3,16 @@
 from datetime import datetime
 
 from flask import Blueprint, redirect, render_template, request, session
+from flask_login import current_user, login_required
 
 from protaskinate.services import task_service, user_service
 
 blueprint = Blueprint("tasks", __name__)
 
 @blueprint.route("/tasks", methods=["GET", "POST"])
+@login_required
 def tasks_route():
     """Render the tasks page"""
-    if not session.get("user_id"):
-        return redirect("/")
 
     if request.method == "POST":
         data = request.form
@@ -31,11 +31,9 @@ def tasks_route():
     return redirect("/tasks")
 
 @blueprint.route("/tasks/<int:task_id>", methods=["POST"])
+@login_required
 def update_task_route(task_id):
     """Update the task"""
-    if not session.get("user_id"):
-        return redirect("/")
-
     data = request.form
     if not data:
         return redirect("/tasks")

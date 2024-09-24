@@ -18,4 +18,8 @@ class UserService:
         """Get all users"""
         return user_repository.get_all()
 
+    def get_by_id(self, user_id: int) -> Optional[User]:
+        """Get a user by ID"""
+        return user_repository.get_by_id(user_id)
+
 user_service = UserService()

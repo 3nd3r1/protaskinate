@@ -19,22 +19,25 @@
 	<body>
         <div class="is-flex">
             <div style="flex-basis: 25%">
-                <aside class="menu p-4" style="height: 100vh; background-color: hsl(var(--bulma-scheme-h),var(--bulma-scheme-s),calc(var(--bulma-scheme-main-l) + var(--background-offset)))">
+                <aside class="menu p-4" style="height: 100%; position: fixed; background-color: hsl(var(--bulma-scheme-h),var(--bulma-scheme-s),calc(var(--bulma-scheme-main-l) + var(--background-offset)))">
                     <h1 class="title is-1">ProTaskinate</h1>
-                    {% if session["user_id"] %}
-                    <p class="menu-label">
-                        General
-                    </p>
-                    <ul class="menu-list">
-                        <li><a href="/dashboard">Dashboard</a></li>
-                    </ul>
-                    <ul class="menu-list">
-                        <li><a href="/tasks">Tasks</a></li>
-                    </ul>
-                    <p class="menu-label">User</p>
-                    <ul class="menu-list">
-                        <li><a href="/logout">Logout</a></li>
-                    </ul>
+                    {% if current_user.is_authenticated %}
+                        <p class="menu-label">General</p>
+                        <ul class="menu-list">
+                            <li><a href="{{ url_for("dashboard.dashboard_route") }}">Dashboard</a></li>
+                        </ul>
+                        <ul class="menu-list">
+                            <li><a href="{{ url_for("tasks.tasks_route") }}">Tasks</a></li>
+                        </ul>
+                        <p class="menu-label">User ({{ current_user.username }})</p>
+                        <ul class="menu-list">
+                            <li><a href="{{ url_for("logout.logout_route") }}">Logout</a></li>
+                        </ul>
+                    {% else  %}
+                        <p class="menu-label">General</p>
+                        <ul class="menu-list">
+                            <li><a href="{{ url_for("login.login_route") }}">Login</a></li>
+                        </ul>
                     {% endif %}
                 </aside>
             </div>

@@ -1,13 +1,12 @@
 """protaskinate/routes/logout.py"""
 
-from flask import Blueprint, redirect, session
-
+from flask import Blueprint, redirect, url_for
+from flask_login import logout_user
 
 blueprint = Blueprint("logout", __name__)
 
 @blueprint.route("/logout", methods=["GET"])
 def logout_route():
     """Render the logout page"""
-    if session.get("user_id"):
-        session.pop("user_id")
-    return redirect("/login")
+    logout_user()
+    return redirect(url_for("login.login_route"))
