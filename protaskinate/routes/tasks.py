@@ -64,6 +64,16 @@ def update_task_route(task_id):
     """Update the task"""
     data = request.form
     if data:
-        task_service.update(task_id, **data)
+        update_data = {}
+        if "status" in data:
+            update_data["status"] = data["status"]
+        if "priority" in data:
+            update_data["priority"] = data["priority"]
+        if "assignee_id" in data:
+            update_data["assignee_id"] = int(data["assignee_id"])
+            if update_data["assignee_id"] == 0:
+                update_data["assignee_id"] = None
+
+        task_service.update(task_id, **update_data)
 
     return redirect(url_for("tasks.tasks_route"))
