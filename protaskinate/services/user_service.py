@@ -22,4 +22,8 @@ class UserService:
         """Get a user by ID"""
         return user_repository.get_by_id(user_id)
 
+    def register(self, username: str, password: str) -> Optional[User]:
+        """Register a user"""
+        return user_repository.create(username=username, password=password)
+
 user_service = UserService()
