@@ -25,7 +25,13 @@ class CreateTaskForm(FlaskForm):
                            choices=[
                                (priority.value, priority.name.lower().replace("_"," ").title())
                                 for priority in TaskPriority])
+    assignee_id = SelectField("Assignee", coerce=int)
     submit = SubmitField("Create Task")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.assignee_id.choices = [(0, "Not Assigned")] + [
+                (user.id, user.username) for user in user_service.get_all()] # type: ignore
 
 
 @blueprint.route("/tasks", methods=["GET", "POST"])
@@ -37,11 +43,13 @@ def tasks_route():
         title = form.title.data
         status = form.status.data
         priority = form.priority.data
+        assignee_id = form.assignee_id.data if form.assignee_id.data != 0 else None
         task_service.create(title=title,
                             status=status,
                             priority=priority,
                             creator_id=current_user.id,
-                            created_at=datetime.now().isoformat())
+                            created_at=datetime.now().isoformat(),
+                            assignee_id=assignee_id)
         return redirect(url_for("tasks.tasks_route"))
 
     tasks = task_service.get_all(order_by_fields=["priority", "created_at"],
