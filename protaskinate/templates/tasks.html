@@ -11,6 +11,7 @@
                     <th>Status</th>
                     <th>Priority</th>
                     <th>Assignee</th>
+                    <th>Deadline</th>
                     <th>Created At</th>
                     <th>Created By</th>
                 </tr>
@@ -54,6 +55,7 @@
                             </div>
                         </form>
                     </td>
+                    <td class="is-align-content-center">{{ task.deadline }}</td>
                     <td class="is-align-content-center">{{ task.created_at }}</td>
                     <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
                 </tr>
