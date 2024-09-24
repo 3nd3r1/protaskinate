@@ -16,14 +16,15 @@ CREATE TABLE users (
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name TEXT,
-    creator_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+    creator_id SERIAL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title TEXT,
     status task_status,
-    creator_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    creator_id SERIAL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP,
-    priority task_priority
+    priority task_priority,
+    assignee_id SERIAL REFERENCES users(id) ON DELETE SET NULL,
 );
