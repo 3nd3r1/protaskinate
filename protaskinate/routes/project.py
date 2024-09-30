@@ -1,7 +1,6 @@
-"""protaskinate/routes/tasks.py"""
+"""protaskinate/routes/project.py"""
 
 from datetime import datetime
-
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
@@ -9,9 +8,9 @@ from wtforms import DateField, SelectField, StringField, SubmitField, TimeField
 from wtforms.validators import DataRequired
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
-from protaskinate.services import task_service, user_service
+from protaskinate.services import project_service, task_service, user_service
 
-blueprint = Blueprint("tasks", __name__)
+blueprint = Blueprint("project", __name__)
 
 
 class CreateTaskForm(FlaskForm):
@@ -34,11 +33,17 @@ class CreateTaskForm(FlaskForm):
         self.assignee_id.choices = [(0, "Not Assigned")] + [
                 (user.id, user.username) for user in user_service.get_all()] # type: ignore
 
-
-@blueprint.route("/tasks", methods=["GET", "POST"])
+@blueprint.route("/projects", methods=["GET", "POST"])
 @login_required
-def tasks_route():
-    """Render the tasks page"""
+def project_list_route():
+    """Render the projects page"""
+    projects = project_service.get_all()
+    return render_template("project_list.html", projects=projects)
+
+@blueprint.route("/projects/<int:project_id>", methods=["GET", "POST"])
+@login_required
+def project_view_route(project_id: int):
+    """Render the single project view page"""
     form = CreateTaskForm(request.form)
     if request.method == "POST" and form.validate_on_submit():
         title = form.title.data
@@ -52,19 +57,26 @@ def tasks_route():
                             creator_id=current_user.id,
                             created_at=datetime.now().isoformat(),
                             assignee_id=assignee_id,
-                            deadline=deadline)
-        return redirect(url_for("tasks.tasks_route"))
+                            deadline=deadline,
+                            project_id=project_id)
+        return redirect(request.url)
 
-    tasks = task_service.get_all(order_by_fields=["priority", "created_at"],
-                                 reverse=[True, False])
+    project = project_service.get_by_id(project_id)
+    tasks = task_service.get_all_by_project(project_id,
+                                            order_by_fields=["priority", "created_at"],
+                                            reverse=[True, False])
     users_dict = {user.id: user for user in user_service.get_all()}
 
-    return render_template("tasks.html", form=form, tasks=tasks, users_dict=users_dict)
+    return render_template("project_view.html",
+                           form=form,
+                           project=project,
+                           tasks=tasks,
+                           users_dict=users_dict)
 
-@blueprint.route("/tasks/<int:task_id>", methods=["POST"])
+@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["POST"])
 @login_required
-def update_task_route(task_id):
-    """Update the task"""
+def project_update_task_route(project_id: int, task_id: int): # pylint: disable=unused-argument
+    """Update project task"""
     data = request.form
     if data:
         update_data = {}
@@ -79,4 +91,4 @@ def update_task_route(task_id):
 
         task_service.update(task_id, **update_data)
 
-    return redirect(url_for("tasks.tasks_route"))
+    return redirect(url_for("project.project_view_route", project_id=project_id))

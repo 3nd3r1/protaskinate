@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Tasks{% endblock %}
+{% block title %}{{project.name}}{% endblock %}
 {% block content %}
-<h2 class="title is-2">Tasks</h2>
+<h2 class="title is-2">{{project.name}}</h2>
 <div>
     <div class="container mb-5">
         <table class="table">
@@ -21,7 +21,7 @@
                 <tr data-task-id="{{task.id}}">
                     <td class="is-align-content-center">{{ task.title }}</td>
                     <td>
-                        <form method="POST" action="/tasks/{{ task.id }}">
+                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-status-select" data-task-id="{{ task.id }}" name="status">
                                     <option value="open" {% if task.status.value == 'open' %}selected{% endif %}>Open</option>
@@ -32,7 +32,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action="/tasks/{{ task.id }}">
+                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-priority-select" data-task-id="{{ task.id }}" name="priority">
                                     <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Low</option>
@@ -44,7 +44,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action="/tasks/{{ task.id }}">
+                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-assignee-select" data-task-id="{{ task.id }}" name="assignee_id">
                                     <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
@@ -76,8 +76,8 @@
         </table>
     </div>
     <div class="container">
-        <h2 class="title is-2">Create Task</h2>
-        <form method="POST" action="/tasks">
+        <h3 class="title is-3">Create Task</h3>
+        <form method="POST">
             {{ form.hidden_tag() }}
             <div class="field">
                 {{ form.title.label(class="label") }}
