@@ -30,7 +30,7 @@ class TaskRepository:
                  FROM tasks ORDER BY {order_clause}"""
 
         result = db.session.execute(text(sql))
-        row = result.fetchall()
+        rows = result.fetchall()
         return [Task(id=row[0],
                      title=row[1],
                      status=row[2],
@@ -38,7 +38,7 @@ class TaskRepository:
                      created_at=row[4],
                      priority=row[5],
                      assignee_id=row[6],
-                     deadline=row[7]) for row in row]
+                     deadline=row[7]) for row in rows]
 
     def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task in the repository"""
