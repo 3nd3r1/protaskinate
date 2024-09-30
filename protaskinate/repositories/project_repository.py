@@ -1,32 +1,21 @@
 """protaskinate/repositories/project_repository.py"""
-
-from typing import List, Optional
-from sqlalchemy import text
-from protaskinate.utils.database import db
 from protaskinate.entities import Project
+from protaskinate.repositories.repository import Repository
 
+AllFields = ["id", "name", "creator_id"]
+RequiredFields = ["name", "creator_id"]
 
-class ProjectRepository:
-    """Class representing a repository for projects"""
+def create_project_from_row(row) -> Project:
+    """Helper function to create a Project entity from a database row"""
+    return Project(id=row[0], name=row[1], creator_id=row[2])
 
-    def get_all(self) -> List[Project]:
-        """Get all projects"""
-        sql = "SELECT id, name, creator_id FROM projects"
+class ProjectRepository(Repository[Project]):
+    """Task repository for managing projects"""
 
-        result = db.session.execute(text(sql))
-        rows = result.fetchall()
-
-        return [Project(id=row[0], name=row[1], creator_id=row[2]) for row in rows]
-
-    def get_by_id(self, project_id: int) -> Optional[Project]:
-        """Get project by id"""
-        sql = "SELECT id, name, creator_id FROM projects WHERE id = :project_id"
-
-        result = db.session.execute(text(sql), {"project_id": project_id})
-        row = result.fetchone()
-
-        if row is None:
-            return None
-        return Project(id=row[0], name=row[1], creator_id=row[2])
+    def __init__(self):
+        super().__init__(table_name="projects",
+                         fields=AllFields,
+                         required_fields=RequiredFields,
+                         entity_creator=create_project_from_row)
 
 project_repository = ProjectRepository()

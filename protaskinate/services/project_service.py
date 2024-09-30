@@ -14,6 +14,6 @@ class ProjectService:
 
     def get_by_id(self, project_id: int) -> Optional[Project]:
         """Get project by id"""
-        return project_repository.get_by_id(project_id)
+        return project_repository.get({"id": project_id})
 
 project_service = ProjectService()
