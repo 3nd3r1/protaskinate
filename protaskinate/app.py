@@ -80,14 +80,22 @@ def populate_db():
     sql_users = """
     INSERT INTO users (username, password) VALUES (:username, :password);
     """
-    sql_tasks = """
-    INSERT INTO tasks (title, status, creator_id, created_at, priority) VALUES
-    ('Task 1', 'open', 1, '2021-01-01', 'low'),
-    ('Task 2', 'in_progress', 1, '2021-01-02', 'high'),
-    ('Task 3', 'done', 1, '2021-01-03', 'very_high');
+    sql_projects = """
+    INSERT INTO projects (name, creator_id) VALUES
+    ('Project 1', 1),
+    ('Project 2', 1),
+    ('Project 3', 1);
     """
+    sql_tasks = """
+    INSERT INTO tasks (title, status, creator_id, created_at, priority, project_id) VALUES
+    ('Task 1', 'open', 1, '2021-01-01', 'low', 1),
+    ('Task 2', 'in_progress', 1, '2021-01-02', 'high', 1),
+    ('Task 3', 'done', 1, '2021-01-03', 'very_high', 1);
+    """
+
     with db.engine.connect() as conn:
         conn.execute(text(sql_users),
                      {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_projects))
         conn.execute(text(sql_tasks))
         conn.commit()
