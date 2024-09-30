@@ -9,11 +9,13 @@
         <style>
             :root {
                 --background-offset: 1%;
+                --bulma-link-h: 269deg;
                 color-scheme: dark;
             }
             .menu {
                 --bulma-menu-item-background-l-delta: 1%;
                 --bulma-menu-item-hover-background-l-delta: 3%;
+                --bulma-menu-item-active-background-l-delta: 5%;
             }
         </style>
 	</head>
@@ -24,13 +26,8 @@
                 {% if current_user.is_authenticated %}
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
-                        <li><a href="{{ url_for("dashboard.dashboard_route") }}">Dashboard</a></li>
-                    </ul>
-                    <ul class="menu-list">
-                        <li><a href="{{ url_for("projects.projects_route") }}">Projects</a></li>
-                    </ul>
-                    <ul class="menu-list">
-                        <li><a href="{{ url_for("tasks.tasks_route") }}">Tasks</a></li>
+                        <li><a href="{{ url_for("dashboard.dashboard_route") }}" class="{% if url_for("dashboard.dashboard_route") in request.path %}is-active{% endif %}">Dashboard</a></li>
+                        <li><a href="{{ url_for("project.project_list_route") }}" class="{% if url_for("project.project_list_route") in request.path %}is-active{% endif %}">Projects</a></li>
                     </ul>
                     <p class="menu-label">User ({{ current_user.username }})</p>
                     <ul class="menu-list">
@@ -39,10 +36,8 @@
                 {% else  %}
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
-                        <li><a href="{{ url_for("login.login_route") }}">Login</a></li>
-                    </ul>
-                    <ul class="menu-list">
-                        <li><a href="{{ url_for("register.register_route") }}">Register</a></li>
+                        <li><a href="{{ url_for("login.login_route") }}" class="{% if url_for("login.login_route") in request.path %}is-active{% endif %}">Login</a></li>
+                        <li><a href="{{ url_for("register.register_route") }}" class="{% if url_for("register.register_route") in request.path %}is-active{% endif %}">Register</a></li>
                     </ul>
                 {% endif %}
             </aside>
