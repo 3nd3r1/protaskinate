@@ -55,8 +55,20 @@
                             </div>
                         </form>
                     </td>
-                    <td class="is-align-content-center">{{ task.deadline }}</td>
-                    <td class="is-align-content-center">{{ task.created_at }}</td>
+                    <td class="is-align-content-center">
+                        {% if task.deadline != None %}
+                            {{ task.deadline.strftime("%d/%m/%Y") }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                    <td class="is-align-content-center">
+                        {% if task.created_at != None %}
+                            {{ task.created_at.strftime("%d/%m/%Y") }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
                     <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
                 </tr>
             {% endfor %}
@@ -93,17 +105,11 @@
                 </div>
             </div>
             <div class="field">
-                {{ form.deadline_date.label(class="label") }}
-                <div class="control is-flex is-gap-2">
-                    {{ form.deadline_date(class="input has-text-white") }}
-                    {{ form.deadline_time(class="input") }}
-                    {% for error in form.deadline_date.errors %}
-                        <p class="help is-danger">{{ error }}</p>
-                    {% endfor %}
-                    {% for error in form.deadline_time.errors %}
-                        <p class="help is-danger">{{ error }}</p>
-                    {% endfor %}
-                </div>
+                {{ form.deadline.label(class="label") }}
+                {{ form.deadline(class="input") }}
+                {% for error in form.deadline.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
             </div>
             <div class="field">
                 <div class="control">

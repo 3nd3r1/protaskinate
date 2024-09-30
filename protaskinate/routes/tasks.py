@@ -26,8 +26,7 @@ class CreateTaskForm(FlaskForm):
                                (priority.value, priority.name.lower().replace("_"," ").title())
                                 for priority in TaskPriority])
     assignee_id = SelectField("Assignee", coerce=int)
-    deadline_date = DateField("Deadline", format="%Y-%m-%d")
-    deadline_time = TimeField("Deadline", format="%H:%M")
+    deadline = DateField("Deadline", format="%Y-%m-%d")
     submit = SubmitField("Create Task")
 
     def __init__(self, *args, **kwargs):
@@ -46,7 +45,7 @@ def tasks_route():
         status = form.status.data
         priority = form.priority.data
         assignee_id = form.assignee_id.data if form.assignee_id.data != 0 else None
-        deadline = datetime.combine(form.deadline_date.data, form.deadline_time.data).isoformat()
+        deadline = form.deadline.data.isoformat()
         task_service.create(title=title,
                             status=status,
                             priority=priority,
