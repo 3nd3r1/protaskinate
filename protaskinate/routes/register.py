@@ -29,6 +29,9 @@ def register_route():
         username = form.username.data
         password = form.password.data
 
+        if user_service.get_by_username(username):
+            return render_template("register.html", form=form, error="Username already exists")
+
         registered_user = user_service.register(username, password)
         if registered_user:
             login_user(registered_user)

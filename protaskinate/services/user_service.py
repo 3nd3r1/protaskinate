@@ -22,6 +22,10 @@ class UserService:
         """Get a user by ID"""
         return user_repository.get_by_id(user_id)
 
+    def get_by_username(self, username: str) -> Optional[User]:
+        """Get a user by username"""
+        return user_repository.get_by_username(username)
+
     def register(self, username: str, password: str) -> Optional[User]:
         """Register a user"""
         return user_repository.create(username=username, password=password)
