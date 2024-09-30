@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import DateField, SelectField, StringField, SubmitField, TimeField
+from wtforms import DateField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
