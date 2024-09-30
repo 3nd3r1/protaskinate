@@ -8,11 +8,12 @@ from protaskinate.repositories import task_repository
 
 class TaskService:
     """Class representing a service for tasks"""
-    def get_all(self,
-                order_by_fields: Optional[list[Literal["title", "created_at", "priority"]]],
-                reverse: Optional[list[bool]]) -> List[Task]:
-        """Get all tasks"""
-        return task_repository.get_all(order_by_fields, reverse)
+    def get_all_by_project(self,
+                project_id: int,
+                order_by_fields: Optional[List[Literal["title", "created_at", "priority"]]],
+                reverse: Optional[List[bool]]) -> List[Task]:
+        """Get all tasks by project"""
+        return task_repository.get_all_by_project(project_id, order_by_fields, reverse)
 
     def update(self, task_id: int, **kwargs) -> Optional[Task]:
         """Update the task"""
