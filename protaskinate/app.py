@@ -9,7 +9,7 @@ from flask.cli import load_dotenv, with_appcontext
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
-from protaskinate.routes import dashboard, login, logout, register, tasks
+from protaskinate.routes import dashboard, login, logout, project, register
 from protaskinate.utils.database import db
 from protaskinate.utils.login_manager import lm
 
@@ -48,8 +48,8 @@ def create_app():
         app.register_blueprint(dashboard.blueprint)
         app.register_blueprint(login.blueprint)
         app.register_blueprint(logout.blueprint)
-        app.register_blueprint(tasks.blueprint)
         app.register_blueprint(register.blueprint)
+        app.register_blueprint(project.blueprint)
 
         @app.route("/ping")
         def ping():
