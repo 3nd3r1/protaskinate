@@ -27,5 +27,6 @@ CREATE TABLE tasks (
     created_at TIMESTAMP NOT NULL,
     priority task_priority NOT NULL,
     assignee_id INT REFERENCES users(id) ON DELETE SET NULL,
-    deadline TIMESTAMP
+    deadline TIMESTAMP,
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE
 );
