@@ -5,7 +5,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import DateField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
 from protaskinate.services import project_service, task_service, user_service
@@ -25,7 +25,7 @@ class CreateTaskForm(FlaskForm):
                                (priority.value, priority.name.lower().replace("_"," ").title())
                                 for priority in TaskPriority])
     assignee_id = SelectField("Assignee", coerce=int)
-    deadline = DateField("Deadline", format="%Y-%m-%d")
+    deadline = DateField("Deadline", format="%Y-%m-%d", validators=[Optional()])
     submit = SubmitField("Create Task")
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ def project_view_route(project_id: int):
         status = form.status.data
         priority = form.priority.data
         assignee_id = form.assignee_id.data if form.assignee_id.data != 0 else None
-        deadline = form.deadline.data.isoformat()
+        deadline = form.deadline.data.isoformat() if form.deadline.data else None
         task_service.create(title=title,
                             status=status,
                             priority=priority,
