@@ -19,6 +19,7 @@ blueprint = Blueprint("project", __name__)
 class CreateTaskForm(FlaskForm):
     """Form for creating a task"""
     title = StringField("Title", validators=[DataRequired()])
+    description = TextAreaField("Description", validators=[Optional()])
     status = SelectField("Status",
                          choices=[
                              (status.value, status.name.lower().replace("_"," ").title())
@@ -59,6 +60,7 @@ def project_view_route(project_id: int):
         priority = form.priority.data
         assignee_id = form.assignee_id.data if form.assignee_id.data != 0 else None
         deadline = form.deadline.data.isoformat() if form.deadline.data else None
+        description = form.description.data if form.description.data else None
         task_service.create(title=title,
                             status=status,
                             priority=priority,
@@ -66,7 +68,8 @@ def project_view_route(project_id: int):
                             created_at=datetime.now().isoformat(),
                             assignee_id=assignee_id,
                             deadline=deadline,
-                            project_id=project_id)
+                            project_id=project_id,
+                            description=description)
         return redirect(request.url)
 
     project = project_service.get_by_id(project_id)

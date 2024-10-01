@@ -23,7 +23,7 @@
                 <div style="flex-basis: 75%">
                     <div class="mb-4">
                         <h3 class="title is-3">{{ task.title }}</h3>
-                        <p>Lorem ipsum</p>
+                        <p>{% if task.description != None %}{{ task.description }}{% endif %}</p>
                     </div>
                     <div>
                         <h3>Comments</h3>
@@ -77,7 +77,7 @@
                         <div class="select">
                             <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
                                 <select name="status" class="task-status-select">
-                                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Not Started</option>
+                                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Open</option>
                                     <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
                                     <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Done</option>
                                 </select>
