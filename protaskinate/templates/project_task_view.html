@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{task.title}}{% endblock %}
+{% block content %}
+<div>
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">{{ task.title }}</p>
+            <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
+                <button class="card-header-icon" type="submit">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </button>
+            </form>
+            <a href="{{url_for("project.project_view_route", project_id=project.id)}}" class="card-header-icon">
+                <span class="icon">
+                    <i class="fas fa-x"></i>
+                </span>
+            </a>
+        </header>
+        <div class="card-content">
+            <div class="content is-flex">
+                <div style="flex-basis: 75%">
+                    <div class="mb-4">
+                        <p>Lorem ipsum</p>
+                    </div>
+                    <div>
+                        <h3>Comments</h3>
+                    </div>
+                </div>
+                <div>
+                    <div class="field">
+                        <label class="label">Status</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="status" class="task-status-select">
+                                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Not Started</option>
+                                    <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
+                                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Completed</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Priority</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="priority" class="task-priority-select">
+                                    <option value="low" {% if task.priority.value == "low" %}selected{% endif %}>Low</option>
+                                    <option value="medium" {% if task.priority.value == "medium" %}selected{% endif %}>Medium</option>
+                                    <option value="high" {% if task.priority.value == "high" %}selected{% endif %}>High</option>
+                                    <option value="very_high" {% if task.priority.value == "very_high" %}selected{% endif %}>Very High</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Assignee</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="assignee_id" class="task-assignee-select">
+                                    <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
+                                    {% for user in users_dict.values() %}
+                                        <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <p class="label">Creator</p>
+                        <div class="control">
+                            <input type="text" class="input" readonly value="{{users_dict[task.creator_id].username }}"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <p class="label">Deadline</p>
+                        <div class="control">
+                            <input type="date" class="input"  value="{% if task.deadline != None %}{{ task.deadline.strftime("%Y-%m-%d") }}{% endif %}"/>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <p>Created At: {{ task.created_at.strftime("%d/%m/%Y") }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.task-status-select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll('.task-priority-select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll('.task-assignee-select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll('.task-delete-form').forEach(function(formElement) {
+        formElement.addEventListener('submit', function() {
+            if (!confirm('Are you sure you want to delete this task?')) {
+                event.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

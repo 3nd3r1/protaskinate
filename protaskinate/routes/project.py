@@ -1,6 +1,7 @@
 """protaskinate/routes/project.py"""
 
 from datetime import datetime
+
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
@@ -33,7 +34,7 @@ class CreateTaskForm(FlaskForm):
         self.assignee_id.choices = [(0, "Not Assigned")] + [
                 (user.id, user.username) for user in user_service.get_all()] # type: ignore
 
-@blueprint.route("/projects", methods=["GET", "POST"])
+@blueprint.route("/projects", methods=["GET"])
 @login_required
 def project_list_route():
     """Render the projects page"""
@@ -73,10 +74,25 @@ def project_view_route(project_id: int):
                            tasks=tasks,
                            users_dict=users_dict)
 
-@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["POST"])
+@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["GET"])
 @login_required
-def project_update_task_route(project_id: int, task_id: int): # pylint: disable=unused-argument
-    """Update project task"""
+def project_task_view_route(project_id: int, task_id: int):
+    """View of a single task in a project"""
+    task = task_service.get_by_id_and_project(task_id, project_id)
+    project = project_service.get_by_id(project_id)
+    users_dict = {user.id: user for user in user_service.get_all()}
+    if not project:
+        return redirect(url_for("dashboard.dashboard_route"))
+    if not task:
+        return redirect(url_for("project.project_view_route", project_id=project_id))
+
+    return render_template("project_task_view.html", project=project,
+                           task=task, users_dict=users_dict)
+
+@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>/edit", methods=["POST"])
+@login_required
+def project_task_edit_route(project_id: int, task_id: int):
+    """Edit a task in a project"""
     data = request.form
     if data:
         update_data = {}
@@ -91,4 +107,10 @@ def project_update_task_route(project_id: int, task_id: int): # pylint: disable=
 
         task_service.update(task_id, **update_data)
 
+    return redirect(request.referrer)
+
+@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>/delete", methods=["POST"])
+@login_required
+def project_task_delete_route(project_id: int, task_id: int): # pylint: disable=unused-argument
+    """Delete a task from a project"""
     return redirect(url_for("project.project_view_route", project_id=project_id))

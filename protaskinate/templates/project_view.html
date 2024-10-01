@@ -21,7 +21,7 @@
                 <tr data-task-id="{{task.id}}">
                     <td class="is-align-content-center">{{ task.title }}</td>
                     <td>
-                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
+                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-status-select" data-task-id="{{ task.id }}" name="status">
                                     <option value="open" {% if task.status.value == 'open' %}selected{% endif %}>Open</option>
@@ -32,7 +32,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
+                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-priority-select" data-task-id="{{ task.id }}" name="priority">
                                     <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Low</option>
@@ -44,7 +44,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action={{ url_for("project.project_update_task_route", project_id=project.id, task_id=task.id) }}>
+                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
                             <div class="select">
                                 <select class="task-assignee-select" data-task-id="{{ task.id }}" name="assignee_id">
                                     <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
@@ -70,6 +70,9 @@
                         {% endif %}
                     </td>
                     <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
+                    <td class="is-align-content-center">
+                        <a href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}" class="button">View</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
