@@ -1,6 +1,6 @@
 """protaskinate/routes/login.py"""
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_user
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
@@ -31,9 +31,10 @@ def login_route():
         user = user_service.login(username, password)
         if user:
             login_user(user)
+            flash("You have been logged in", "success")
             return redirect(url_for("dashboard.dashboard_route"))
+        flash("Invalid username or password", "error")
 
-        return render_template("login.html", form=form, error="Invalid username or password")
     return render_template("login.html", form=form)
 
 @lm.user_loader
