@@ -9,21 +9,22 @@ from protaskinate.repositories.comment_repository import \
 from protaskinate.repositories.repository import Repository
 from protaskinate.utils.database import db
 
-AllFields = ["id", "title", "status", "creator_id", "created_at", "priority",
-             "assignee_id", "deadline", "project_id"]
-RequiredFields = ["title", "status", "creator_id", "created_at", "priority", "project_id"]
+AllFields = ["id", "project_id", "creator_id", "title", "status", "priority", "created_at",
+             "assignee_id", "deadline", "description"]
+RequiredFields = ["project_id", "creator_id", "title", "status", "priority", "created_at"]
 
 def create_task_from_row(row) -> Task:
     """Helper function to create a Task entity from a database row"""
     return Task(id=row[0],
-                title=row[1],
-                status=row[2],
-                creator_id=row[3],
-                created_at=row[4],
+                project_id=row[1],
+                creator_id=row[2],
+                title=row[3],
+                status=row[4],
                 priority=row[5],
-                assignee_id=row[6],
-                deadline=row[7],
-                project_id=row[8])
+                created_at=row[6],
+                assignee_id=row[7],
+                deadline=row[8],
+                description=row[9])
 
 class TaskRepository(Repository[Task]):
     """Task repository for managing tasks"""

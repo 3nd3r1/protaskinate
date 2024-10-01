@@ -23,13 +23,14 @@ CREATE TABLE projects (
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     status task_status NOT NULL,
-    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP NOT NULL,
     priority task_priority NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     assignee_id INT REFERENCES users(id) ON DELETE SET NULL,
-    deadline TIMESTAMP
+    deadline TIMESTAMP,
+    description TEXT
 );
 
 CREATE TABLE comments (
