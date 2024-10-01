@@ -19,7 +19,7 @@
             </a>
         </header>
         <div class="card-content">
-            <div class="content is-flex">
+            <div class="content is-flex" style="gap: 16px">
                 <div style="flex-basis: 75%">
                     <div class="mb-4">
                         <h3 class="title is-3">{{ task.title }}</h3>
@@ -27,6 +27,48 @@
                     </div>
                     <div>
                         <h3>Comments</h3>
+                        <div class="is-flex mb-4">
+                            <div>
+                                <span class="icon is-large">
+                                    <i class="fas fa-user fa-xl"></i>
+                                </span>
+                            </div>
+                            <div class="field is-flex-grow-1">
+                                <form method="POST">
+                                    {{ form.hidden_tag() }}
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.content(class="textarea") }}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.submit(class="button") }}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="is-flex is-flex-direction-column" style="gap: 8px">
+                            {% for comment in task.comments %}
+                                <div class="is-flex">
+                                    <div>
+                                         <span class="icon is-large">
+                                            <i class="fas fa-user fa-xl"></i>
+                                         </span>
+                                    </div>
+                                    <div>
+                                        <div class="is-flex is-align-items-center" style="gap: 4px">
+                                            <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
+                                            <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
+                                        </div>
+                                        <div class="content">
+                                            <p>{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
                 <div>

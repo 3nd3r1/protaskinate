@@ -92,10 +92,17 @@ def populate_db():
     ('Task 2', 'in_progress', 1, '2021-01-02', 'high', 1),
     ('Task 3', 'done', 1, '2021-01-03', 'very_high', 1);
     """
+    sql_comments = """
+    INSERT INTO comments (task_id, creator_id, created_at, content) VALUES
+    (1, 1, '2021-01-01', 'Comment 1'),
+    (1, 1, '2021-01-02', 'Comment 2'),
+    (2, 1, '2021-01-03', 'Comment 3');
+    """
 
     with db.engine.connect() as conn:
         conn.execute(text(sql_users),
                      {"username": "admin", "password": generate_password_hash("admin")})
         conn.execute(text(sql_projects))
         conn.execute(text(sql_tasks))
+        conn.execute(text(sql_comments))
         conn.commit()

@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 DROP TYPE IF EXISTS task_status;
 DROP TYPE IF EXISTS task_priority;
 
@@ -29,4 +30,12 @@ CREATE TABLE tasks (
     priority task_priority NOT NULL,
     assignee_id INT REFERENCES users(id) ON DELETE SET NULL,
     deadline TIMESTAMP
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    task_id INT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    content TEXT NOT NULL
 );

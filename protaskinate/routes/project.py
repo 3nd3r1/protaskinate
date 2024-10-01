@@ -2,14 +2,14 @@
 
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import DateField, SelectField, StringField, SubmitField
+from wtforms import DateField, SelectField, StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Optional
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
-from protaskinate.services import project_service, task_service, user_service
+from protaskinate.services import comment_service, project_service, task_service, user_service
 
 blueprint = Blueprint("project", __name__)
 
@@ -33,6 +33,11 @@ class CreateTaskForm(FlaskForm):
         super().__init__(*args, **kwargs)
         self.assignee_id.choices = [(0, "Not Assigned")] + [
                 (user.id, user.username) for user in user_service.get_all()] # type: ignore
+
+class CreateCommentForm(FlaskForm):
+    """Form for creating a comment"""
+    content = TextAreaField("Content", validators=[DataRequired()])
+    submit = SubmitField("Send")
 
 @blueprint.route("/projects", methods=["GET"])
 @login_required
@@ -74,20 +79,30 @@ def project_view_route(project_id: int):
                            tasks=tasks,
                            users_dict=users_dict)
 
-@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["GET"])
+@blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def project_task_view_route(project_id: int, task_id: int):
     """View of a single task in a project"""
-    task = task_service.get_by_id_and_project(task_id, project_id)
+    form = CreateCommentForm(request.form)
+    if request.method == "POST" and form.validate_on_submit():
+        content = form.content.data
+        new_comment = comment_service.create(task_id=task_id, creator_id=current_user.id,
+                               created_at=datetime.now().isoformat(), content=content)
+        if not new_comment:
+            flash("Failed to create comment", "error")
+        form.content.data = ""
+
+    task = task_service.get_by_id_and_project_with_comments(task_id, project_id)
     project = project_service.get_by_id(project_id)
     users_dict = {user.id: user for user in user_service.get_all()}
+
     if not project:
         return redirect(url_for("dashboard.dashboard_route"))
     if not task:
         return redirect(url_for("project.project_view_route", project_id=project_id))
 
     return render_template("project_task_view.html", project=project,
-                           task=task, users_dict=users_dict)
+                           task=task, users_dict=users_dict, form=form)
 
 @blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>/edit", methods=["POST"])
 @login_required

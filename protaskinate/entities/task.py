@@ -3,7 +3,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
+
+from protaskinate.entities.comment import Comment
 
 
 class TaskStatus(Enum):
@@ -53,6 +55,7 @@ class Task:
     assignee_id: Optional[int]
     deadline: Optional[datetime]
     project_id: int
+    comments: Optional[List[Comment]] = None
 
     def __post_init__(self):
         if not isinstance(self.id, int):
@@ -87,3 +90,7 @@ class Task:
 
         if not isinstance(self.project_id, int):
             raise ValueError(f"Invalid project_id: {self.project_id}")
+
+        if (self.comments is not None and
+            not all(isinstance(comment, Comment) for comment in self.comments)):
+            raise ValueError("Invalid comments")
