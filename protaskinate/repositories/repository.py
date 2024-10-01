@@ -97,3 +97,9 @@ class Repository(Generic[T]):
         db.session.commit()
 
         return self._entity_creator(row) if row else None
+
+    def delete(self, entity_id: int) -> None:
+        """Delete an entity from the repository"""
+        sql = f"DELETE FROM {self._table_name} WHERE id = :entity_id"
+        db.session.execute(text(sql), {"entity_id": entity_id})
+        db.session.commit()

@@ -27,4 +27,8 @@ class TaskService:
         """Create a task"""
         return task_repository.create(**kwargs)
 
+    def delete(self, task_id: int) -> None:
+        """Delete a task"""
+        return task_repository.delete(task_id)
+
 task_service = TaskService()
