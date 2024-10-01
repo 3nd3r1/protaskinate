@@ -4,7 +4,7 @@
 <div>
     <div class="card">
         <header class="card-header">
-            <p class="card-header-title">{{ task.title }}</p>
+            <p class="card-header-title">task-{{ task.id }}</p>
             <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
                 <button class="card-header-icon" type="submit">
                     <span class="icon">
@@ -22,6 +22,7 @@
             <div class="content is-flex">
                 <div style="flex-basis: 75%">
                     <div class="mb-4">
+                        <h3 class="title is-3">{{ task.title }}</h3>
                         <p>Lorem ipsum</p>
                     </div>
                     <div>
