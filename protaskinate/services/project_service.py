@@ -16,4 +16,8 @@ class ProjectService:
         """Get project by id"""
         return project_repository.get({"id": project_id})
 
+    def delete(self, project_id: int) -> None:
+        """Delete a project"""
+        return project_repository.delete({"id": project_id})
+
 project_service = ProjectService()

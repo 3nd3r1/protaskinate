@@ -5,11 +5,13 @@ from datetime import datetime
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import DateField, SelectField, StringField, SubmitField, TextAreaField
+from wtforms import (DateField, SelectField, StringField, SubmitField,
+                     TextAreaField)
 from wtforms.validators import DataRequired, Optional
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
-from protaskinate.services import comment_service, project_service, task_service, user_service
+from protaskinate.services import (comment_service, project_service,
+                                   task_service, user_service)
 
 blueprint = Blueprint("project", __name__)
 
@@ -78,6 +80,13 @@ def project_view_route(project_id: int):
                            project=project,
                            tasks=tasks,
                            users_dict=users_dict)
+
+@blueprint.route("/projects/<int:project_id>/delete", methods=["POST"])
+@login_required
+def project_delete_route(project_id: int):
+    """Delete a project"""
+    project_service.delete(project_id)
+    return redirect(url_for("project.project_list_route"))
 
 @blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>", methods=["GET", "POST"])
 @login_required
