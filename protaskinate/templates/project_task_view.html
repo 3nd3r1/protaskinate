@@ -37,7 +37,7 @@
                                 <select name="status" class="task-status-select">
                                     <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Not Started</option>
                                     <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
-                                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Completed</option>
+                                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Done</option>
                                 </select>
                             </form>
                         </div>
@@ -108,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
             this.form.submit();
         });
     });
-    document.querySelectorAll(".task-deadline-date
     document.querySelectorAll(".task-delete-form").forEach(function(formElement) {
         formElement.addEventListener("submit", function() {
             if (!confirm("Are you sure you want to delete this task?")) {

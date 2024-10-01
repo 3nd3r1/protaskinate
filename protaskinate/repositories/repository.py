@@ -23,12 +23,12 @@ class Repository(Generic[T]):
         """Get all entities from the repository by some fields"""
         if by_fields is not None:
             if any(key not in self._fields for key in by_fields):
-                raise ValueError("Invalid by fields")
+                raise ValueError("Invalid by_fields")
         if order_by_fields is not None:
             if any(field not in self._fields for field in order_by_fields):
-                raise ValueError("Invalid order by fields")
+                raise ValueError("Invalid order_by_fields")
             if reverse is None or len(order_by_fields) != len(reverse):
-                raise ValueError("Invalid reverse fields")
+                raise ValueError("Invalid reverse")
 
         order_clause = ""
         where_clause = ""
@@ -50,7 +50,7 @@ class Repository(Generic[T]):
     def get(self, by_fields: Dict[str, Union[int, str]]) -> Optional[T]:
         """Get one entity from the repository by some fields"""
         if any(key not in self._fields for key in by_fields):
-            raise ValueError("Invalid by fields")
+            raise ValueError("Invalid by_fields")
 
         where_clause = "WHERE " + " AND ".join(f"{key} = :{key}" for key in by_fields)
         all_fields = ", ".join(self._fields)
@@ -62,44 +62,53 @@ class Repository(Generic[T]):
 
         return self._entity_creator(row) if row else None
 
-    def create(self, **kwargs) -> Optional[T]:
+    def create(self, field_values: Dict[str, Union[int, str]]) -> Optional[T]:
         """Create a new entity in the repository"""
-        if any(key not in self._fields for key in kwargs):
+        if any(key not in self._fields for key in field_values):
             raise ValueError("Invalid fields")
-        if not all(key in kwargs for key in self._required_fields):
+        if not all(key in field_values for key in self._required_fields):
             raise ValueError("Missing required fields")
 
-        fields = ", ".join(kwargs.keys())
-        values = ", ".join(f":{key}" for key in kwargs)
+        fields = ", ".join(field_values.keys())
+        values = ", ".join(f":{key}" for key in field_values)
         all_fields = ", ".join(self._fields)
 
         sql = f"INSERT INTO {self._table_name} ({fields}) VALUES ({values}) RETURNING {all_fields}"
 
-        result = db.session.execute(text(sql), kwargs)
+        result = db.session.execute(text(sql), field_values)
         row = result.fetchone()
         db.session.commit()
 
         return self._entity_creator(row) if row else None
 
-    def update(self, entity_id: int, **kwargs) -> Optional[T]:
+    def update(self, by_fields: Dict[str, Union[int, str]],
+               updates: Dict[str, Union[int, str]]) -> Optional[T]:
         """Update an entity in the repository"""
-        if not kwargs or any(key not in self._fields for key in kwargs):
-            raise ValueError("Invalid update fields")
+        if not by_fields or any(key not in self._fields for key in by_fields):
+            raise ValueError("Invalid by_fields")
+        if not updates or any(key not in self._fields for key in updates):
+            raise ValueError("Invalid update_fields")
 
-        set_clause = ", ".join(f"{key} = :{key}" for key in kwargs)
+        set_clause = ", ".join(f"{key} = :{key}" for key in updates)
+        where_clause = " AND ".join(f"{key} = :{key}" for key in by_fields)
         all_fields = ", ".join(self._fields)
 
         sql = f"""UPDATE {self._table_name}
-                  SET {set_clause} WHERE id = :entity_id RETURNING {all_fields}"""
+                  SET {set_clause} WHERE {where_clause} RETURNING {all_fields}"""
 
-        result = db.session.execute(text(sql), {"entity_id": entity_id, **kwargs})
+        result = db.session.execute(text(sql), {**by_fields, **updates})
         row = result.fetchone()
         db.session.commit()
 
         return self._entity_creator(row) if row else None
 
-    def delete(self, entity_id: int) -> None:
+    def delete(self, by_fields: Dict[str, Union[int, str]]) -> None:
         """Delete an entity from the repository"""
-        sql = f"DELETE FROM {self._table_name} WHERE id = :entity_id"
-        db.session.execute(text(sql), {"entity_id": entity_id})
+        if not by_fields or any(key not in self._fields for key in by_fields):
+            raise ValueError("Invalid by_fields")
+
+        where_clause = " AND ".join(f"{key} = :{key}" for key in by_fields)
+
+        sql = f"DELETE FROM {self._table_name} WHERE {where_clause}"
+        db.session.execute(text(sql), by_fields)
         db.session.commit()

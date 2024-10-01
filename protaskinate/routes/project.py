@@ -91,7 +91,7 @@ def project_task_view_route(project_id: int, task_id: int):
 
 @blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>/edit", methods=["POST"])
 @login_required
-def project_task_edit_route(project_id: int, task_id: int): # pylint: disable=unused-argument
+def project_task_edit_route(project_id: int, task_id: int):
     """Edit a task in a project"""
     data = request.form
     if data:
@@ -105,7 +105,7 @@ def project_task_edit_route(project_id: int, task_id: int): # pylint: disable=un
             if update_data["assignee_id"] == 0:
                 update_data["assignee_id"] = None
 
-        task_service.update(task_id, **update_data)
+        task_service.update(task_id, project_id, **update_data)
 
     return redirect(request.referrer)
 
@@ -113,5 +113,5 @@ def project_task_edit_route(project_id: int, task_id: int): # pylint: disable=un
 @login_required
 def project_task_delete_route(project_id: int, task_id: int):
     """Delete a task from a project"""
-    task_service.delete(task_id)
+    task_service.delete(task_id, project_id)
     return redirect(url_for("project.project_view_route", project_id=project_id))

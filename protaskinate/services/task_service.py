@@ -19,16 +19,16 @@ class TaskService:
         """Get task by ID"""
         return task_repository.get({"id": task_id, "project_id": project_id})
 
-    def update(self, task_id: int, **kwargs) -> Optional[Task]:
+    def update(self, task_id: int, project_id: int, **kwargs) -> Optional[Task]:
         """Update the task"""
-        return task_repository.update(task_id, **kwargs)
+        return task_repository.update({"id":task_id, "project_id": project_id}, kwargs)
 
     def create(self, **kwargs) -> Optional[Task]:
         """Create a task"""
-        return task_repository.create(**kwargs)
+        return task_repository.create(kwargs)
 
-    def delete(self, task_id: int) -> None:
+    def delete(self, task_id: int, project_id: int) -> None:
         """Delete a task"""
-        return task_repository.delete(task_id)
+        return task_repository.delete({"id": task_id, "project_id": project_id})
 
 task_service = TaskService()
