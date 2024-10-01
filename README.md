@@ -75,6 +75,14 @@ poetry run invoke dev
 
 ## Weekly Report
 
+### Välipalautus 3 - 2024-10-1
+
+The project is almost finished. The project still has good code structure and clean code. Many more features have been implemented, but some are still left. Test coverage is still very poor.
+
+The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+
+More info in the [changelog](docs/changelog.md).
+
 ### Välipalautus 2 - 2024-09-17
 
 The project is progressing well. Testing has not yet been started so the coverage is poor. The project has a good structure and the code is clean. Many core features have been completed, more information can be found in the [changelog](docs/changelog.md). The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
