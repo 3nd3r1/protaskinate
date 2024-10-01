@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}{{task.title}}{% endblock %}
+{% block content %}
+<div>
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">task-{{ task.id }}</p>
+            <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
+                <button class="card-header-icon" type="submit">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </button>
+            </form>
+            <a href="{{url_for("project.project_view_route", project_id=project.id)}}" class="card-header-icon">
+                <span class="icon">
+                    <i class="fas fa-x"></i>
+                </span>
+            </a>
+        </header>
+        <div class="card-content">
+            <div class="content is-flex" style="gap: 16px">
+                <div style="flex-basis: 75%">
+                    <div class="mb-4">
+                        <h3 class="title is-3">{{ task.title }}</h3>
+                        <p>{% if task.description != None %}{{ task.description }}{% endif %}</p>
+                    </div>
+                    <div>
+                        <h3>Comments</h3>
+                        <div class="is-flex mb-4">
+                            <div>
+                                <span class="icon is-large">
+                                    <i class="fas fa-user fa-xl"></i>
+                                </span>
+                            </div>
+                            <div class="field is-flex-grow-1">
+                                <form method="POST">
+                                    {{ form.hidden_tag() }}
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.content(class="textarea") }}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.submit(class="button") }}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="is-flex is-flex-direction-column" style="gap: 8px">
+                            {% for comment in task.comments %}
+                                <div class="is-flex">
+                                    <div>
+                                         <span class="icon is-large">
+                                            <i class="fas fa-user fa-xl"></i>
+                                         </span>
+                                    </div>
+                                    <div>
+                                        <div class="is-flex is-align-items-center" style="gap: 4px">
+                                            <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
+                                            <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
+                                        </div>
+                                        <div class="content">
+                                            <p>{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="field">
+                        <label class="label">Status</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="status" class="task-status-select">
+                                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Open</option>
+                                    <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
+                                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Done</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Priority</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="priority" class="task-priority-select">
+                                    <option value="low" {% if task.priority.value == "low" %}selected{% endif %}>Low</option>
+                                    <option value="medium" {% if task.priority.value == "medium" %}selected{% endif %}>Medium</option>
+                                    <option value="high" {% if task.priority.value == "high" %}selected{% endif %}>High</option>
+                                    <option value="very_high" {% if task.priority.value == "very_high" %}selected{% endif %}>Very High</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Assignee</label>
+                        <div class="select">
+                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                                <select name="assignee_id" class="task-assignee-select">
+                                    <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
+                                    {% for user in users_dict.values() %}
+                                        <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <p class="label">Creator</p>
+                        <div class="control">
+                            <input type="text" class="input" readonly value="{{users_dict[task.creator_id].username }}"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <p class="label">Deadline</p>
+                        <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                            <div class="control">
+                                <input type="date" class="task-deadline-date input" value="{% if task.deadline != None %}{{ task.deadline.strftime("%Y-%m-%d") }}{% endif %}"/>
+                            </div>
+                        </form>
+                    </div>
+                    <hr>
+                    <div>
+                        <p>Created At: {{ task.created_at.strftime("%d/%m/%Y") }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".task-status-select").forEach(function(selectElement) {
+        selectElement.addEventListener("change", function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll(".task-priority-select").forEach(function(selectElement) {
+        selectElement.addEventListener("change", function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll(".task-assignee-select").forEach(function(selectElement) {
+        selectElement.addEventListener("change", function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll(".task-delete-form").forEach(function(formElement) {
+        formElement.addEventListener("submit", function() {
+            if (!confirm("Are you sure you want to delete this task?")) {
+                event.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

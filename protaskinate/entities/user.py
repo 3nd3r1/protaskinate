@@ -3,9 +3,11 @@
 
 from dataclasses import dataclass
 
+from flask_login import UserMixin
+
 
 @dataclass
-class User:
+class User(UserMixin):
     """Class representing a user"""
     id: int
     username: str

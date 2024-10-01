@@ -3,6 +3,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import List, Optional
+
+from protaskinate.entities.comment import Comment
+from protaskinate.utils.validation import validate_enum, validate_type
 
 
 class TaskStatus(Enum):
@@ -44,33 +48,29 @@ class TaskPriority(Enum):
 class Task:
     """Class representing a task"""
     id: int
+    project_id: int
+    creator_id: int
     title: str
     status: TaskStatus
-    creator_id: int
-    created_at: datetime
     priority: TaskPriority
+    created_at: datetime
+    assignee_id: Optional[int] = None
+    deadline: Optional[datetime] = None
+    description: Optional[str] = None
+    comments: Optional[List[Comment]] = None
 
     def __post_init__(self):
-        if not isinstance(self.id, int):
-            raise ValueError(f"Invalid id: {self.id}")
-
-        if not isinstance(self.title, str):
-            raise ValueError(f"Invalid title: {self.title}")
-
-        if not isinstance(self.status, TaskStatus):
-            try:
-                self.status = TaskStatus(self.status)
-            except ValueError as exc:
-                raise ValueError(f"Invalid status: {self.status}") from exc
-
-        if not isinstance(self.creator_id, int):
-            raise ValueError(f"Invalid creator_id: {self.creator_id}")
-
-        if not isinstance(self.created_at, datetime):
-            raise ValueError(f"Invalid created_at: {self.created_at}")
-
-        if not isinstance(self.priority, TaskPriority):
-            try:
-                self.priority = TaskPriority(self.priority)
-            except ValueError as exc:
-                raise ValueError(f"Invalid priority: {self.priority}") from exc
+        validate_type(self.id, int, "id")
+        validate_type(self.project_id, int, "project_id")
+        validate_type(self.creator_id, int, "creator_id")
+        validate_type(self.title, str, "title")
+        self.status = validate_enum(self.status, TaskStatus, "status")
+        self.priority = validate_enum(self.priority, TaskPriority, "priority")
+        validate_type(self.created_at, datetime, "created_at")
+        validate_type(self.assignee_id, int, "assignee_id", allow_none=True)
+        validate_type(self.deadline, datetime, "deadline", allow_none=True)
+        validate_type(self.description, str, "description", allow_none=True)
+        validate_type(self.comments, list, "comments", allow_none=True)
+        if self.comments:
+            for comment in self.comments:
+                validate_type(comment, Comment, "comment")

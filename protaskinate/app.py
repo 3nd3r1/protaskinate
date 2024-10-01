@@ -9,8 +9,9 @@ from flask.cli import load_dotenv, with_appcontext
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
-from protaskinate.routes import dashboard, login, logout, tasks
+from protaskinate.routes import dashboard, login, logout, project, register
 from protaskinate.utils.database import db
+from protaskinate.utils.login_manager import lm
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.secret_key.env"))
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
@@ -27,6 +28,10 @@ def create_app():
         raise ValueError(("Please generate a secret_key with "
                           "`poetry run invoke generate-secret-key`"))
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["PORT"] = os.environ.get("PORT", 5000)
     app.config["DEBUG"] = os.environ.get("DEBUG", False)
@@ -34,6 +39,7 @@ def create_app():
     logging.basicConfig(level=logging.DEBUG if app.config["DEBUG"] else logging.INFO)
 
     db.init_app(app)
+    lm.init_app(app)
 
     app.cli.add_command(create_schema)
     app.cli.add_command(populate_db)
@@ -42,7 +48,8 @@ def create_app():
         app.register_blueprint(dashboard.blueprint)
         app.register_blueprint(login.blueprint)
         app.register_blueprint(logout.blueprint)
-        app.register_blueprint(tasks.blueprint)
+        app.register_blueprint(register.blueprint)
+        app.register_blueprint(project.blueprint)
 
         @app.route("/ping")
         def ping():
@@ -73,14 +80,29 @@ def populate_db():
     sql_users = """
     INSERT INTO users (username, password) VALUES (:username, :password);
     """
-    sql_tasks = """
-    INSERT INTO tasks (title, status, creator_id, created_at, priority) VALUES
-    ('Task 1', 'open', 1, '2021-01-01', 'low'),
-    ('Task 2', 'in_progress', 1, '2021-01-02', 'high'),
-    ('Task 3', 'done', 1, '2021-01-03', 'very_high');
+    sql_projects = """
+    INSERT INTO projects (name, creator_id) VALUES
+    ('Project 1', 1),
+    ('Project 2', 1),
+    ('Project 3', 1);
     """
+    sql_tasks = """
+    INSERT INTO tasks (title, status, creator_id, created_at, priority, project_id, description) VALUES
+    ('Task 1', 'open', 1, '2021-01-01', 'low', 1, 'Task 1 description'),
+    ('Task 2', 'in_progress', 1, '2021-01-02', 'high', 1, 'Task 2 description'),
+    ('Task 3', 'done', 1, '2021-01-03', 'very_high', 1, 'Task 3 description');
+    """
+    sql_comments = """
+    INSERT INTO comments (task_id, creator_id, created_at, content) VALUES
+    (1, 1, '2021-01-01', 'Comment 1'),
+    (1, 1, '2021-01-02', 'Comment 2'),
+    (2, 1, '2021-01-03', 'Comment 3');
+    """
+
     with db.engine.connect() as conn:
         conn.execute(text(sql_users),
                      {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_projects))
         conn.execute(text(sql_tasks))
+        conn.execute(text(sql_comments))
         conn.commit()

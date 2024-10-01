@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 DROP TYPE IF EXISTS task_status;
 DROP TYPE IF EXISTS task_priority;
 
@@ -9,21 +10,33 @@ CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'very_high');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
-    name TEXT,
-    creator_id INTEGER REFERENCES users
+    name TEXT NOT NULL,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
-    title TEXT,
-    status task_status,
-    creator_id INTEGER REFERENCES users,
-    created_at TIMESTAMP,
-    priority task_priority
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    status task_status NOT NULL,
+    priority task_priority NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    assignee_id INT REFERENCES users(id) ON DELETE SET NULL,
+    deadline TIMESTAMP,
+    description TEXT
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    task_id INT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    content TEXT NOT NULL
 );

@@ -1,63 +1,69 @@
 """protaskinate/repositories/task_repository.py"""
-
-
-from typing import List, Literal
+from typing import Dict, Optional, Union
 
 from sqlalchemy import text
 
 from protaskinate.entities import Task
+from protaskinate.repositories.comment_repository import \
+    create_comment_from_row, AllFields as CommentAllFields
+from protaskinate.repositories.repository import Repository
 from protaskinate.utils.database import db
 
+AllFields = ["id", "project_id", "creator_id", "title", "status", "priority", "created_at",
+             "assignee_id", "deadline", "description"]
+RequiredFields = ["project_id", "creator_id", "title", "status", "priority", "created_at"]
 
-class TaskRepository:
-    """Class representing a repository for tasks"""
+def create_task_from_row(row) -> Task:
+    """Helper function to create a Task entity from a database row"""
+    return Task(id=row[0],
+                project_id=row[1],
+                creator_id=row[2],
+                title=row[3],
+                status=row[4],
+                priority=row[5],
+                created_at=row[6],
+                assignee_id=row[7],
+                deadline=row[8],
+                description=row[9])
 
-    def get_all(self,
-                order_by_fields: List[Literal["title", "created_at", "priority"]] | None = None,
-                reverse: list[bool] | None = None) -> List[Task]:
-        """Get all tasks from the repository"""
-        if order_by_fields is None or reverse is None:
-            order_by_fields = ["created_at"]
-            reverse = [True]
+class TaskRepository(Repository[Task]):
+    """Task repository for managing tasks"""
 
-        allowed_attributes = ["title", "created_at", "priority"]
-        order_clause = ", ".join(
-                f"{field} {'DESC' if reverse else ''}"
-                for field, reverse in zip(order_by_fields, reverse)
-                if field in allowed_attributes)
+    def __init__(self):
+        super().__init__(table_name="tasks",
+                         fields=AllFields,
+                         required_fields=RequiredFields,
+                         entity_creator=create_task_from_row)
 
-        sql = f"""SELECT id, title, status, creator_id, created_at, priority
-                 FROM tasks ORDER BY {order_clause}"""
+    def get_join_comments(self, by_fields: Dict[str, Union[int, str]]) -> Optional[Task]:
+        """Get a task by fields and join comments"""
+        if not by_fields or any(key not in self._fields for key in by_fields):
+            raise ValueError("Invalid by_fields")
 
-        result = db.session.execute(text(sql))
-        row = result.fetchall()
-        return [Task(id=row[0],
-                     title=row[1],
-                     status=row[2],
-                     creator_id=row[3],
-                     created_at=row[4],
-                     priority=row[5]) for row in row]
+        where_clause = " AND ".join(f"task.{key} = :{key}" for key in by_fields)
+        fields = ", ".join(f"task.{field}" for field in self._fields)
+        fields += ", "+", ".join(f"comment.{field}" for field in CommentAllFields)
 
-    def update(self, task_id: int, **kwargs):
-        """Update the task in the repository"""
-        allowed_attributes = ["title", "status", "priority"]
-        filtered_kwargs = {key: value for key, value in kwargs.items() if key in allowed_attributes}
-        set_clause = ", ".join(f"{key} = :{key}" for key in filtered_kwargs.keys())
-        sql = f"""
-            UPDATE tasks
-            SET {set_clause}
-            WHERE id = :task_id
-        """
-        db.session.execute(text(sql), {"task_id": task_id, **filtered_kwargs})
-        db.session.commit()
+        sql = f"""SELECT {fields}
+                 FROM {self._table_name} task
+                 LEFT JOIN comments comment ON task.id = comment.task_id
+                 WHERE {where_clause}
+                 ORDER BY comment.created_at"""
 
-    def create(self, **kwargs):
-        """Create a task in the repository"""
-        sql = """
-            INSERT INTO tasks (title, status, creator_id, created_at, priority)
-            VALUES (:title, :status, :creator_id, :created_at, :priority)
-        """
-        db.session.execute(text(sql), kwargs)
-        db.session.commit()
+        result = db.session.execute(text(sql), by_fields)
+        rows = result.fetchall()
+
+        if not rows:
+            return None
+
+        task = self._entity_creator(rows[0])
+        task.comments = []
+        for row in rows:
+            if row[len(self._fields)] and row[0] == task.id:
+                comment = create_comment_from_row(row[len(self._fields):])
+                task.comments.append(comment)
+
+        return task
+
 
 task_repository = TaskRepository()
