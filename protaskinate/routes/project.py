@@ -66,6 +66,7 @@ def project_view_route(project_id: int):
                             priority=priority,
                             creator_id=current_user.id,
                             created_at=datetime.now().isoformat(),
+                            updated_at=datetime.now().isoformat(),
                             assignee_id=assignee_id,
                             deadline=deadline,
                             project_id=project_id,

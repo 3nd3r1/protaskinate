@@ -54,6 +54,7 @@ class Task:
     status: TaskStatus
     priority: TaskPriority
     created_at: datetime
+    updated_at: datetime
     assignee_id: Optional[int] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
@@ -67,6 +68,7 @@ class Task:
         self.status = validate_enum(self.status, TaskStatus, "status")
         self.priority = validate_enum(self.priority, TaskPriority, "priority")
         validate_type(self.created_at, datetime, "created_at")
+        validate_type(self.updated_at, datetime, "updated_at")
         validate_type(self.assignee_id, int, "assignee_id", allow_none=True)
         validate_type(self.deadline, datetime, "deadline", allow_none=True)
         validate_type(self.description, str, "description", allow_none=True)

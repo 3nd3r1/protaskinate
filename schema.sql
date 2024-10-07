@@ -28,6 +28,7 @@ CREATE TABLE tasks (
     status task_status NOT NULL,
     priority task_priority NOT NULL,
     created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
     assignee_id INT REFERENCES users(id) ON DELETE SET NULL,
     deadline TIMESTAMP,
     description TEXT
@@ -40,3 +41,16 @@ CREATE TABLE comments (
     created_at TIMESTAMP NOT NULL,
     content TEXT NOT NULL
 );
+
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = NOW();
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tasks_update_updated_at_trigger
+BEFORE UPDATE ON tasks
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();

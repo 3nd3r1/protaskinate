@@ -13,6 +13,7 @@
                     <th>Assignee</th>
                     <th>Deadline</th>
                     <th>Created At</th>
+                    <th>Updated At</th>
                     <th>Created By</th>
                 </tr>
             </thead>
@@ -63,11 +64,10 @@
                         {% endif %}
                     </td>
                     <td class="is-align-content-center">
-                        {% if task.created_at != None %}
-                            {{ task.created_at.strftime("%d/%m/%Y") }}
-                        {% else %}
-                            None
-                        {% endif %}
+                        {{ task.created_at.strftime("%d/%m/%Y") }}
+                    </td>
+                    <td class="is-align-content-center">
+                        {{ task.updated_at.strftime("%d/%m/%Y") }}
                     </td>
                     <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
                     <td class="is-align-content-center">

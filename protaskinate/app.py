@@ -87,10 +87,10 @@ def populate_db():
     ('Project 3', 1);
     """
     sql_tasks = """
-    INSERT INTO tasks (title, status, creator_id, created_at, priority, project_id, description) VALUES
-    ('Task 1', 'open', 1, '2021-01-01', 'low', 1, 'Task 1 description'),
-    ('Task 2', 'in_progress', 1, '2021-01-02', 'high', 1, 'Task 2 description'),
-    ('Task 3', 'done', 1, '2021-01-03', 'very_high', 1, 'Task 3 description');
+    INSERT INTO tasks (title, status, creator_id, created_at, updated_at, priority, project_id, description) VALUES
+    ('Task 1', 'open', 1, '2021-01-01', '2021-01-01', 'low', 1, 'Task 1 description'),
+    ('Task 2', 'in_progress', 1, '2021-01-02', '2021-01-02', 'high', 1, 'Task 2 description'),
+    ('Task 3', 'done', 1, '2021-01-03', '2021-01-03', 'very_high', 1, 'Task 3 description');
     """
     sql_comments = """
     INSERT INTO comments (task_id, creator_id, created_at, content) VALUES
