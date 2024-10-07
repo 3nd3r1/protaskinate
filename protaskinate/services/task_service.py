@@ -15,9 +15,9 @@ class TaskService:
         """Get all tasks by project"""
         return task_repository.get_all({"project_id": project_id}, order_by_fields, reverse)
 
-    def get_by_id_and_project_with_comments(self, task_id: int, project_id: int) -> Optional[Task]:
-        """Get task by ID and project with comments"""
-        return task_repository.get_join_comments({"id": task_id, "project_id": project_id})
+    def get_by_id_and_project(self, task_id: int, project_id: int) -> Optional[Task]:
+        """Get task by ID and project"""
+        return task_repository.get({"id": task_id, "project_id": project_id})
 
     def update(self, task_id: int, project_id: int, **kwargs) -> Optional[Task]:
         """Update the task"""

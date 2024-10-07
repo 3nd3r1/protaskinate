@@ -58,7 +58,6 @@ class Task:
     assignee_id: Optional[int] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
-    comments: Optional[List[Comment]] = None
 
     def __post_init__(self):
         validate_type(self.id, int, "id")
@@ -72,7 +71,3 @@ class Task:
         validate_type(self.assignee_id, int, "assignee_id", allow_none=True)
         validate_type(self.deadline, datetime, "deadline", allow_none=True)
         validate_type(self.description, str, "description", allow_none=True)
-        validate_type(self.comments, list, "comments", allow_none=True)
-        if self.comments:
-            for comment in self.comments:
-                validate_type(comment, Comment, "comment")

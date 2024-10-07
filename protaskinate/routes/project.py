@@ -103,9 +103,11 @@ def project_task_view_route(project_id: int, task_id: int):
                                created_at=datetime.now().isoformat(), content=content)
         if not new_comment:
             flash("Failed to create comment", "error")
-        form.content.data = ""
+        else:
+            form.content.data = ""
 
-    task = task_service.get_by_id_and_project_with_comments(task_id, project_id)
+    task = task_service.get_by_id_and_project(task_id, project_id)
+    comments = comment_service.get_all_by_task(task_id)
     project = project_service.get_by_id(project_id)
     users_dict = {user.id: user for user in user_service.get_all()}
 
@@ -115,7 +117,7 @@ def project_task_view_route(project_id: int, task_id: int):
         return redirect(url_for("project.project_view_route", project_id=project_id))
 
     return render_template("project_task_view.html", project=project,
-                           task=task, users_dict=users_dict, form=form)
+                           task=task, comments=comments, users_dict=users_dict, form=form)
 
 @blueprint.route("/projects/<int:project_id>/tasks/<int:task_id>/edit", methods=["POST"])
 @login_required
