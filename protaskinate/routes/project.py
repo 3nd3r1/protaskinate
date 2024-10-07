@@ -132,6 +132,8 @@ def project_task_edit_route(project_id: int, task_id: int):
             update_data["assignee_id"] = int(data["assignee_id"])
             if update_data["assignee_id"] == 0:
                 update_data["assignee_id"] = None
+        if "deadline" in data:
+            update_data["deadline"] = data["deadline"]
 
         task_service.update(task_id, project_id, **update_data)
 

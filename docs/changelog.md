@@ -9,6 +9,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - User can now view updated_at for all tasks
+- User can now update the deadline of a task
 
 ## [v0.2.0-beta] - 2024-10-01
 

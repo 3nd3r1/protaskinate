@@ -56,12 +56,12 @@
                             </div>
                         </form>
                     </td>
-                    <td class="is-align-content-center">
-                        {% if task.deadline != None %}
-                            {{ task.deadline.strftime("%d/%m/%Y") }}
-                        {% else %}
-                            None
-                        {% endif %}
+                    <td>
+                        <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+                            <div class="control">
+                                <input name="deadline" type="date" class="task-deadline-date input" value="{% if task.deadline != None %}{{ task.deadline.strftime("%Y-%m-%d") }}{% endif %}"/>
+                            </div>
+                        </form>
                     </td>
                     <td class="is-align-content-center">
                         {{ task.created_at.strftime("%d/%m/%Y") }}
@@ -156,6 +156,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     document.querySelectorAll(".task-assignee-select").forEach(function(selectElement) {
         selectElement.addEventListener("change", function() {
+            this.form.submit();
+        });
+    });
+    document.querySelectorAll(".task-deadline-date").forEach(function(dateElement) {
+        dateElement.addEventListener("change", function() {
             this.form.submit();
         });
     });
