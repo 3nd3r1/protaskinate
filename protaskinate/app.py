@@ -83,10 +83,10 @@ def populate_db():
     ('user', :user_password);
     """
     sql_projects = """
-    INSERT INTO projects (name, creator_id) VALUES
-    ('Project 1', 1),
-    ('Project 2', 1),
-    ('Project 3', 1);
+    INSERT INTO projects (name, creator_id, created_at, description) VALUES
+    ('Project 1', 1, '2021-01-01', 'Project 1 description'),
+    ('Project 2', 1, '2021-01-02', 'Project 2 description'),
+    ('Project 3', 1, '2021-01-03', 'Project 3 description');
     """
     sql_tasks = """
     INSERT INTO tasks (title, status, creator_id, created_at, updated_at, priority, project_id, description) VALUES

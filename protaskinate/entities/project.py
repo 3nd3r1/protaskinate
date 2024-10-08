@@ -1,9 +1,11 @@
 """protaskinate/entities/project.py"""
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+from typing import Optional
 
-from protaskinate.utils.validation import validate_enum
+from protaskinate.utils.validation import validate_enum, validate_type
 
 
 class ProjectRole(Enum):
@@ -18,21 +20,21 @@ class Project:
     id: int
     name: str
     creator_id: int
+    created_at: datetime
+    description: Optional[str] = None
 
     def __post_init__(self):
-        if not isinstance(self.id, int):
-            raise ValueError(f"Invalid id: {self.id}")
+        validate_type(self.id, int, "id")
+        validate_type(self.name, str, "name")
+        validate_type(self.creator_id, int, "creator_id")
+        validate_type(self.created_at, datetime, "created_at")
+        validate_type(self.description, str, "description", allow_none=True)
 
-        if not isinstance(self.name, str):
-            raise ValueError(f"Invalid name: {self.name}")
-
-        if not isinstance(self.creator_id, int):
-            raise ValueError(f"Invalid creator_id: {self.creator_id}")
 
 @dataclass
 class ProjectWithRole(Project):
     """Class representing a project with the current user's role"""
-    role: ProjectRole
+    role: Optional[ProjectRole] = None
 
     def __post_init__(self):
-        self.role = validate_enum(self.role, ProjectRole, "role")
+        self.role = validate_enum(self.role, ProjectRole, "role", allow_none=True)

@@ -49,23 +49,27 @@
                 {% endif %}
             </aside>
             <div style="margin-left: 350px">
-                <section class="section column">
-                    <div class="container">
-                        <div class="mb-4 is-flex is-flex-direction-column" style="gap: 8px">
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                        {% for category, message in messages %}
-                                            <div class="notification is-{% if category == "error" %}danger{% elif category == "success"%}success{% else %}info{% endif %}">
-                                                <button class="delete"></button>
-                                                {{ message }}
-                                            </div>
-                                        {% endfor %}
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-                        {% block content %}{% endblock %}
+                <div class="container">
+                    <div class="my-4 is-flex is-flex-direction-column" style="gap: 8px">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="notification is-{% if category == "error" %}danger{% elif category == "success"%}success{% else %}info{% endif %}">
+                                            <button class="delete"></button>
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                     </div>
-                </section>
+                    <section class="hero">
+                        <div class="hero-body">
+                            <h1 class="title is-2">{% block hero_title %}{% endblock %}</h1>
+                            <h2 class="subtitle">{% block hero_description %}{% endblock %}</h2>
+                        </div>
+                    </section>
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </div>
 	</body>

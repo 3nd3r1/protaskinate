@@ -7,16 +7,17 @@ from protaskinate.entities.project import Project, ProjectRole, ProjectWithRole
 from protaskinate.repositories.repository import Repository
 from protaskinate.utils.database import db
 
-AllFields = ["id", "name", "creator_id"]
-RequiredFields = ["name", "creator_id"]
+AllFields = ["id", "name", "creator_id", "created_at", "description"]
+RequiredFields = ["name", "creator_id", "created_at"]
 
 def create_project_from_row(row: Row[Any]) -> Project:
     """Helper function to create a Project entity from a database row"""
-    return Project(id=row[0], name=row[1], creator_id=row[2])
+    return Project(id=row[0], name=row[1], creator_id=row[2], created_at=row[3], description=row[4])
 
 def create_project_with_role_from_row(row: Row[Any]) -> ProjectWithRole:
     """Helper function to create a ProjectWithRole entity from a database row"""
-    return ProjectWithRole(id=row[0], name=row[1], creator_id=row[2], role=row[3])
+    return ProjectWithRole(id=row[0], name=row[1], creator_id=row[2],
+                           created_at=row[3], description=row[4], role=row[5])
 
 class ProjectRepository(Repository[Project]):
     """Task repository for managing projects"""

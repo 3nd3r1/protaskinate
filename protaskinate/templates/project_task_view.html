@@ -1,8 +1,8 @@
-{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access %}
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, format_datetime %}
 {% extends "base.html" %}
 {% block title %}{{task.title}}{% endblock %}
 {% block content %}
-<div>
+<div class="p-4">
     <div class="card">
         <header class="card-header">
             <p class="card-header-title">task-{{ task.id }}</p>
@@ -28,56 +28,60 @@
         </header>
         <div class="card-content">
             <div class="content is-flex" style="gap: 16px">
-                <div style="flex-basis: 75%">
-                    <div class="mb-4">
-                        <h3 class="title is-3">{{ task.title }}</h3>
-                        <p>{% if task.description != None %}{{ task.description }}{% endif %}</p>
-                    </div>
-                    <div>
-                        <h3>Comments</h3>
-                        <div class="is-flex mb-4">
-                            <div>
-                                <span class="icon is-large">
-                                    <i class="fas fa-user fa-xl"></i>
-                                </span>
-                            </div>
-                            <div class="field is-flex-grow-1">
-                                <form method="POST">
-                                    {{ form.hidden_tag() }}
-                                    <div class="field">
-                                        <div class="control">
-                                            {{ form.content(class="textarea") }}
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="control">
-                                            {{ form.submit(class="button is-link") }}
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                <div class="container" style="flex-basis: 75%">
+                    <section class="hero is-small">
+                        <div class="hero-body">
+                            <h3 class="title">{{ task.title }}</h3>
+                            <p class="subtitle">{% if task.description != None %}{{ task.description }}{% endif %}</p>
                         </div>
-                        <div class="is-flex is-flex-direction-column" style="gap: 8px">
-                            {% for comment in comments %}
-                                <div class="is-flex">
-                                    <div>
-                                         <span class="icon is-large">
-                                            <i class="fas fa-user fa-xl"></i>
-                                         </span>
-                                    </div>
-                                    <div>
-                                        <div class="is-flex is-align-items-center" style="gap: 4px">
-                                            <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
-                                            <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
-                                        </div>
-                                        <div class="content">
-                                            <p>{{ comment.content }}</p>
-                                        </div>
-                                    </div>
+                    </section>
+                    <section class="section is-small">
+                        <div>
+                            <h3>Comments</h3>
+                            <div class="is-flex mb-4">
+                                <div>
+                                    <span class="icon is-large">
+                                        <i class="fas fa-user fa-xl"></i>
+                                    </span>
                                 </div>
-                            {% endfor %}
+                                <div class="field is-flex-grow-1">
+                                    <form method="POST">
+                                        {{ form.hidden_tag() }}
+                                        <div class="field">
+                                            <div class="control">
+                                                {{ form.content(class="textarea") }}
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="control">
+                                                {{ form.submit(class="button is-link") }}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="is-flex is-flex-direction-column" style="gap: 8px">
+                                {% for comment in comments %}
+                                    <div class="is-flex">
+                                        <div>
+                                             <span class="icon is-large">
+                                                <i class="fas fa-user fa-xl"></i>
+                                             </span>
+                                        </div>
+                                        <div>
+                                            <div class="is-flex is-align-items-center" style="gap: 4px">
+                                                <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
+                                                <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
+                                            </div>
+                                            <div class="content">
+                                                <p>{{ comment.content }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
                 <div>
                     <div class="field">
@@ -104,8 +108,8 @@
                     </div>
                     <hr>
                     <div>
-                        <p>Created At: {{ task.created_at.strftime("%d/%m/%Y") }}</p>
-                        <p>Updated At: {{ task.updated_at.strftime("%d/%m/%Y") }}</p>
+                        <p>Created At: {{ format_datetime(task.created_at) }}</p>
+                        <p>Updated At: {{ format_datetime(task.updated_at) }}</p>
                     </div>
                 </div>
             </div>

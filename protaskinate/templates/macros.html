@@ -80,3 +80,7 @@
         </div>
     </form>
 {% endmacro %}
+
+{% macro format_datetime(datetime) %}
+    <time datetime="{{ datetime.strftime("%Y-%m-%d") }}">{{ datetime.strftime("%d/%m/%Y") }}</time>
+{% endmacro %}

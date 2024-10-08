@@ -1,7 +1,9 @@
 """protaskinate/utils/validation.py"""
 
-def validate_enum(value, enum_class, field_name):
+def validate_enum(value, enum_class, field_name, allow_none=False):
     """Validate that a value is a member of an enumeration."""
+    if allow_none and value is None:
+        return None
     try:
         return enum_class(value)
     except ValueError as exc:

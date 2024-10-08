@@ -21,7 +21,9 @@ CREATE TABLE users (
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    description TEXT
 );
 
 CREATE TABLE tasks (
