@@ -1,7 +1,16 @@
 """protaskinate/entities/project.py"""
 
 from dataclasses import dataclass
+from enum import Enum
 
+from protaskinate.utils.validation import validate_enum
+
+
+class ProjectRole(Enum):
+    """Enumeration representing the role of a user in a project"""
+    READER = "reader"
+    WRITER = "writer"
+    ADMIN = "admin"
 
 @dataclass
 class Project:
@@ -19,3 +28,11 @@ class Project:
 
         if not isinstance(self.creator_id, int):
             raise ValueError(f"Invalid creator_id: {self.creator_id}")
+
+@dataclass
+class ProjectWithRole(Project):
+    """Class representing a project with the current user's role"""
+    role: ProjectRole
+
+    def __post_init__(self):
+        self.role = validate_enum(self.role, ProjectRole, "role")

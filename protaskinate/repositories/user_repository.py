@@ -1,6 +1,7 @@
 """protaskinate/repositories/user_repository.py"""
 from sqlalchemy import text
 from werkzeug.security import check_password_hash
+
 from protaskinate.entities import User
 from protaskinate.repositories.repository import Repository
 from protaskinate.utils.database import db

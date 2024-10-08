@@ -78,7 +78,9 @@ def populate_db():
     """ Populate the database with sample data """
     logging.info("Populating database")
     sql_users = """
-    INSERT INTO users (username, password) VALUES (:username, :password);
+    INSERT INTO users (username, password) VALUES
+    ('admin', :admin_password),
+    ('user', :user_password);
     """
     sql_projects = """
     INSERT INTO projects (name, creator_id) VALUES
@@ -88,21 +90,41 @@ def populate_db():
     """
     sql_tasks = """
     INSERT INTO tasks (title, status, creator_id, created_at, updated_at, priority, project_id, description) VALUES
-    ('Task 1', 'open', 1, '2021-01-01', '2021-01-01', 'low', 1, 'Task 1 description'),
-    ('Task 2', 'in_progress', 1, '2021-01-02', '2021-01-02', 'high', 1, 'Task 2 description'),
-    ('Task 3', 'done', 1, '2021-01-03', '2021-01-03', 'very_high', 1, 'Task 3 description');
+    ('Project 1 Task 1', 'open', 1, '2021-01-01', '2021-01-01', 'low', 1, 'Task 1 description'),
+    ('Project 1 Task 2', 'in_progress', 1, '2021-01-02', '2021-01-02', 'high', 1, 'Task 2 description'),
+    ('Project 1 Task 3', 'done', 2, '2021-01-03', '2021-01-03', 'very_high', 1, 'Task 3 description'),
+
+    ('Project 2 Task 1', 'open', 1, '2021-01-01', '2021-01-01', 'low', 2, 'Task 1 description'),
+    ('Project 2 Task 2', 'in_progress', 1, '2021-01-02', '2021-01-02', 'high', 2, 'Task 2 description'),
+    ('Project 2 Task 3', 'done', 2, '2021-01-03', '2021-01-03', 'very_high', 2, 'Task 3 description'),
+
+    ('Project 3 Task 1', 'open', 1, '2021-01-01', '2021-01-01', 'low', 3, 'Task 1 description'),
+    ('Project 3 Task 2', 'in_progress', 1, '2021-01-02', '2021-01-02', 'high', 3, 'Task 2 description'),
+    ('Project 3 Task 3', 'done', 2, '2021-01-03', '2021-01-03', 'very_high', 3, 'Task 3 description');
     """
     sql_comments = """
     INSERT INTO comments (task_id, creator_id, created_at, content) VALUES
     (1, 1, '2021-01-01', 'Comment 1'),
-    (1, 1, '2021-01-02', 'Comment 2'),
-    (2, 1, '2021-01-03', 'Comment 3');
+    (1, 2, '2021-01-02', 'Comment 2'),
+    (1, 1, '2021-01-03', 'Comment 4'),
+    (2, 1, '2021-01-04', 'Comment 3');
+    """
+    sql_user_projects = """
+    INSERT INTO user_projects (user_id, project_id, role) VALUES
+    (1, 1, 'admin'),
+    (1, 2, 'admin'),
+    (1, 3, 'admin'),
+    (2, 2, 'reader'),
+    (2, 3, 'writer');
     """
 
+
     with db.engine.connect() as conn:
-        conn.execute(text(sql_users),
-                     {"username": "admin", "password": generate_password_hash("admin")})
+        conn.execute(text(sql_users), {
+            "admin_password": generate_password_hash("admin"),
+            "user_password": generate_password_hash("user")})
         conn.execute(text(sql_projects))
         conn.execute(text(sql_tasks))
         conn.execute(text(sql_comments))
+        conn.execute(text(sql_user_projects))
         conn.commit()

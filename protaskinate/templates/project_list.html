@@ -1,10 +1,11 @@
+{% from "macros.html" import delete_project_form %}
 {% extends "base.html" %}
 {% block title %}Projects{% endblock %}
 {% block content %}
 <h2 class="title is-2">Projects</h2>
 <div class="fixed-grid has-3-cols">
     <div class="grid">
-        {% for project in projects %}
+        {% for project in projects_with_roles %}
             <div class="cell">
                 <div class="card">
                     <header class="card-header">
@@ -16,9 +17,7 @@
                     </div>
                     <footer class="card-footer">
                         <a href="{{ url_for("project.project_view_route", project_id=project.id) }}" class="card-footer-item">View</a>
-                        <form method="POST" action="{{ url_for("project.project_delete_route", project_id=project.id) }}" class="card-footer-item project-delete-form p-0">
-                            <button type="submit" class="has-text-link" style="width: 100%; height: 100%">Delete</button>
-                        </form>
+                        {{ delete_project_form(project) }}
                     </footer>
                 </div>
             </div>

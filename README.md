@@ -23,7 +23,7 @@
 - [x] **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
 - [ ] **Kanban Board**: Visualize and manage tasks across different stages (To Do, In Progress, Done).
 - [x] **Project Organization**: Organize tasks within specific projects for better clarity and tracking.
-- [ ] **User Roles**: Assign roles (Admin/User) with different access permissions.
+- [x] **User Roles**: Assign roles (Admin/User) with different access permissions.
 - [x] **Comments and Collaboration**: Leave comments on tasks for better communication between team members.
 - [ ] **Activity Log**: Track task updates and project changes in real time.
 - [ ] **Visualization**: Easily create charts (E.g. burndown chart) to visualize your project.

@@ -1,3 +1,4 @@
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access %}
 {% extends "base.html" %}
 {% block title %}{{task.title}}{% endblock %}
 {% block content %}
@@ -5,18 +6,25 @@
     <div class="card">
         <header class="card-header">
             <p class="card-header-title">task-{{ task.id }}</p>
-            <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
-                <button class="card-header-icon" type="submit">
+            <div>
+                <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
+                    {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+                    <div class="control">
+                        <button class="button card-header-icon" type="submit">
+                            <span class="icon">
+                                <i class="fas fa-trash"></i>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <a href="{{url_for("project.project_view_route", project_id=project.id)}}" class="card-header-icon">
                     <span class="icon">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-x"></i>
                     </span>
-                </button>
-            </form>
-            <a href="{{url_for("project.project_view_route", project_id=project.id)}}" class="card-header-icon">
-                <span class="icon">
-                    <i class="fas fa-x"></i>
-                </span>
-            </a>
+                </a>
+            </div>
         </header>
         <div class="card-content">
             <div class="content is-flex" style="gap: 16px">
@@ -43,7 +51,7 @@
                                     </div>
                                     <div class="field">
                                         <div class="control">
-                                            {{ form.submit(class="button") }}
+                                            {{ form.submit(class="button is-link") }}
                                         </div>
                                     </div>
                                 </form>
@@ -74,41 +82,15 @@
                 <div>
                     <div class="field">
                         <label class="label">Status</label>
-                        <div class="select">
-                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
-                                <select name="status" class="task-status-select">
-                                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Open</option>
-                                    <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
-                                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Done</option>
-                                </select>
-                            </form>
-                        </div>
+                        {{ update_task_status_form(project, task, user_project_role, current_user) }}
                     </div>
                     <div class="field">
                         <label class="label">Priority</label>
-                        <div class="select">
-                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
-                                <select name="priority" class="task-priority-select">
-                                    <option value="low" {% if task.priority.value == "low" %}selected{% endif %}>Low</option>
-                                    <option value="medium" {% if task.priority.value == "medium" %}selected{% endif %}>Medium</option>
-                                    <option value="high" {% if task.priority.value == "high" %}selected{% endif %}>High</option>
-                                    <option value="very_high" {% if task.priority.value == "very_high" %}selected{% endif %}>Very High</option>
-                                </select>
-                            </form>
-                        </div>
+                        {{ update_task_priority_form(project, task, user_project_role, current_user) }}
                     </div>
                     <div class="field">
                         <label class="label">Assignee</label>
-                        <div class="select">
-                            <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
-                                <select name="assignee_id" class="task-assignee-select">
-                                    <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
-                                    {% for user in users_dict.values() %}
-                                        <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
-                                    {% endfor %}
-                                </select>
-                            </form>
-                        </div>
+                        {{ update_task_assignee_form(project, task, user_project_role, current_user, users_dict) }}
                     </div>
                     <div class="field">
                         <p class="label">Creator</p>
@@ -118,11 +100,7 @@
                     </div>
                     <div class="field">
                         <p class="label">Deadline</p>
-                        <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
-                            <div class="control">
-                                <input name="deadline" type="date" class="task-deadline-date input" value="{% if task.deadline != None %}{{ task.deadline.strftime("%Y-%m-%d") }}{% endif %}"/>
-                            </div>
-                        </form>
+                        {{ update_task_deadline_form(project, task, user_project_role, current_user) }}
                     </div>
                     <hr>
                     <div>

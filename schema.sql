@@ -2,11 +2,15 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS user_projects CASCADE;
+
 DROP TYPE IF EXISTS task_status;
 DROP TYPE IF EXISTS task_priority;
+DROP TYPE IF EXISTS project_role;
 
 CREATE TYPE task_status AS ENUM ('open', 'in_progress', 'done');
 CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'very_high');
+CREATE TYPE project_role AS ENUM ('reader', 'writer', 'admin');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -40,6 +44,13 @@ CREATE TABLE comments (
     creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL,
     content TEXT NOT NULL
+);
+
+CREATE TABLE user_projects (
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    role project_role NOT NULL,
+    PRIMARY KEY (user_id, project_id) 
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at()

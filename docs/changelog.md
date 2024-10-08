@@ -8,8 +8,16 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
-- User can now view updated_at for all tasks
-- User can now update the deadline of a task
+- User can now have one of the following roles for each project: `reader`, `writer`, `admin`
+    - `reader` can view tasks, view project and comment to a task
+    - `writer` can also create tasks and update/delete his own tasks
+    - `admin` can also update/delete all tasks and delete/update the project
+- User can now view updated_at for all tasks he has access to
+- User can now update the deadline of a task he has access to
+
+### Fixed
+
+- Important buttons are now purple to fit the color scheme
 
 ## [v0.2.0-beta] - 2024-10-01
 
