@@ -14,7 +14,9 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
     - `admin` can also update/delete all tasks and delete/update the project
 - User can now view updated_at for all tasks user has access to
 - User can now update the deadline of a task user has access to
-- User can now addditionally view description, creator, role and creation date for all projects user has access to 
+- User can now addditionally view description, creator, role, updated_at and created_at for all projects user has access to 
+- User can now assign and de-assign roles for projects user has admin access to
+- User can now create a project
 
 ### Fixed
 
