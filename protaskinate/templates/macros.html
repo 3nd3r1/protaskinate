@@ -98,3 +98,21 @@
 {% macro format_datetime(datetime) %}
     <time datetime="{{ datetime.strftime("%Y-%m-%d") }}">{{ datetime.strftime("%d/%m/%Y") }}</time>
 {% endmacro %}
+
+{% macro nav_link(href, text) %}
+    <a href="{{ href }}" class="{% if href == request.path %}is-active{% endif %}">
+        {{ text }}
+    </a>
+{% endmacro %}
+
+{% macro task_priority_icon(priority) %}
+    {% if priority.value == "low" %}
+    <i class="fas fa-arrow-down has-text-success"></i>
+    {% elif priority.value == "medium" %}
+    <i class="fas fa-arrow-down has-text-info"></i>
+    {% elif priority.value == "high" %}
+    <i class="fas fa-arrow-up has-text-warning"></i>
+    {% elif priority.value == "very_high" %}
+    <i class="fas fa-arrow-up has-text-danger"></i>
+    {% endif %}
+{% endmacro %}

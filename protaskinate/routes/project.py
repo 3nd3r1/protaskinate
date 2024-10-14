@@ -69,7 +69,9 @@ def project_board_route(project_id: int):
     project = project_service.get_by_id(project_id)
     tasks = task_service.get_all_by_project(project_id)
     user_project_role = project_service.get_user_role(current_user.id, project_id)
-    return render_template("project_board.html", project=project, tasks=tasks, user_project_role=user_project_role)
+    users_dict = {user.id: user for user in user_service.get_all()}
+    return render_template("project_board.html", project=project, tasks=tasks,
+                           user_project_role=user_project_role, users_dict=users_dict)
 
 @blueprint.route("/projects/<int:project_id>/delete", methods=["POST"])
 @login_required

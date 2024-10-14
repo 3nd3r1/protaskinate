@@ -1,3 +1,5 @@
+{% from "macros.html" import task_priority_icon %}
+
 {% macro status_task_cards(project, task, status) %}
 {% for task in tasks %}
 {% if task.status.value == status %}
@@ -7,11 +9,31 @@
         <form action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}" method="POST">
             <input type="hidden" name="status" value="{{status}}">
         </form>
+        <a class="card-header-icon" draggable="false" href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}">
+            <span class="icon">
+                <i class="fas fa-eye"></i>
+            </span>
+        </a>
     </header>
+    <footer class="card-footer">
+        <div class="card-footer-item is-flex" style="gap: 8px">
+            {{ task_priority_icon(task.priority) }}
+            {{ task.priority.value.title().replace("_", " ") }}
+        </div>
+        <div class="card-footer-item is-flex" style="gap: 8px">
+            <i class="fas fa-user"></i>
+            {% if task.assignee_id %}
+            {{ users_dict[task.assignee_id].username }}
+            {% else %}
+            Unassigned
+            {% endif %}
+        </div>
+    </footer>
 </div>
 {% endif %}
 {% endfor %}
 {% endmacro %}
+
 {% extends "base.html" %}
 {% block title %}{{project.name}}{% endblock %}
 {% block hero_title %}{{project.name}} - Board{% endblock %}

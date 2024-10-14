@@ -1,3 +1,4 @@
+{% from "macros.html" import nav_link %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -33,26 +34,25 @@
                 {% if current_user.is_authenticated %}
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
-                        <li><a href="{{ url_for("dashboard.dashboard_route") }}" class="{% if url_for("dashboard.dashboard_route") == request.path %}is-active{% endif %}">Dashboard</a></li>
                         <li>
-                            <a href="{{ url_for("project.project_list_route") }}" class="{% if url_for("project.project_list_route") == request.path %}is-active{% endif %}">Projects</a>
+                            {{ nav_link(url_for("dashboard.dashboard_route"), "Dashboard") }}
+                        </li>
+                        <li>
+                            {{ nav_link(url_for("project.project_list_route"), "Projects") }}
                             {% if project %}
                             <ul class="menu-list">
                                 <li>
-                                    <a href="{{ url_for("project.project_view_route", project_id=project.id) }}" class="{% if url_for("project.project_view_route", project_id=project.id) == request.path %}is-active{% endif %}">View</a>
+                                    {{ nav_link(url_for("project.project_view_route", project_id=project.id), "View") }}
                                     {% if task %}
-                                    <ul class="menu-list">
-                                        <li>
-                                            <a href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}" 
-                                               class="{% if url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) == request.path %}is-active{% endif %}">
-                                                {{ task.title }}
-                                            </a>
-                                        </li>
-                                    </ul>
+                                        <ul class="menu-list">
+                                            <li>
+                                                {{ nav_link(url_for("project.project_task_view_route", project_id=project.id, task_id=task.id), task.title) }}
+                                            </li>
+                                        </ul>
                                     {% endif %}
                                 </li>
                                 <li>
-                                    <a href="{{ url_for("project.project_board_route", project_id=project.id) }}" class="{% if url_for("project.project_board_route", project_id=project.id) == request.path %}is-active{% endif %}">Board</a>
+                                    {{ nav_link(url_for("project.project_board_route", project_id=project.id), "Board") }}
                                 </li>
                             </ul>
                             {% endif %}
