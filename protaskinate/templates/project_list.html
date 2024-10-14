@@ -8,24 +8,55 @@
         <div class="container">
             <div class="fixed-grid has-3-cols">
                 <div class="grid">
-                    {% for project in projects_with_roles %}
+                    {% for pwr in projects_with_roles %}
                         <div class="cell">
                             <div class="card">
                                 <div class="card-content">
                                     <div class="content">
-                                        <h2 class="title">{{ project.name }}</h2>
-                                        <p>{% if project.description %}{{ project.description }}{% endif %}</p>
+                                        <h2 class="title">{{ pwr.project.name }}</h2>
+                                        <p>{% if pwr.project.description %}{{ pwr.project.description }}{% endif %}</p>
                                     </div>
                                 </div>
                                 <footer class="card-footer">
-                                    <a href="{{ url_for("project.project_view_route", project_id=project.id) }}" class="card-footer-item">View</a>
-                                    {{ delete_project_form(project) }}
+                                    <a href="{{ url_for("project.project_view_route", project_id=pwr.project.id) }}" class="card-footer-item">View</a>
+                                    {{ delete_project_form(pwr) }}
                                 </footer>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             <div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h3 class="title is-4">Create Project</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                        {{ form.name(class="input") }}
+                    </div>
+                    {% for error in form.name.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        {{ form.description(class="textarea") }}
+                    </div>
+                    {% for error in form.description.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.submit(class="button is-link") }}
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
     <script>

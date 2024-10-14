@@ -16,10 +16,10 @@
     {% endif %}
 {% endmacro %}
 
-{% macro delete_project_form(project) %}
-    <form method="POST" action="{{ url_for("project.project_delete_route", project_id=project.id) }}" class="card-footer-item project-delete-form p-0">
-        {{ disable_form_if_no_update_access(project.role) }}
-        <button type="submit" class="{% if project.role.value != "admin" %}has-text-dark{% else %}has-text-link{% endif %}" style="width: 100%; height: 100%; {% if project.role.value != "admin" %}cursor: not-allowed{% endif %}">
+{% macro delete_project_form(project_with_role) %}
+    <form method="POST" action="{{ url_for("project.project_delete_route", project_id=project_with_role.project.id) }}" class="card-footer-item project-delete-form p-0">
+        {{ disable_form_if_no_update_access(project_with_role.role) }}
+        <button type="submit" class="{% if project_with_role.role.value != "admin" %}has-text-dark{% else %}has-text-link{% endif %}" style="width: 100%; height: 100%; {% if project_with_role.role.value != "admin" %}cursor: not-allowed{% endif %}">
             Delete
         </button>
     </form>

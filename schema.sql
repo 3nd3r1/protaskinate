@@ -23,6 +23,7 @@ CREATE TABLE projects (
     name TEXT NOT NULL,
     creator_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
     description TEXT
 );
 
@@ -63,7 +64,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION assign_admin_role()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO user_projects (user_id, project_id, role)
+    VALUES (NEW.creator_id, NEW.id, 'admin')
+    ON CONFLICT DO NOTHING;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER tasks_update_updated_at_trigger
 BEFORE UPDATE ON tasks
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER projects_update_updated_at_trigger
+BEFORE UPDATE ON projects
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER projects_assign_admin_role_to_creator_trigger
+AFTER INSERT ON projects
+FOR EACH ROW
+EXECUTE FUNCTION assign_admin_role();

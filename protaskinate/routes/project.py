@@ -7,7 +7,7 @@ from flask_login import current_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import (DateField, SelectField, StringField, SubmitField,
                      TextAreaField)
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Length, Optional
 
 from protaskinate.entities.task import TaskPriority, TaskStatus
 from protaskinate.services import (comment_service, project_service,
@@ -20,8 +20,8 @@ blueprint = Blueprint("project", __name__)
 
 class CreateTaskForm(FlaskForm):
     """Form for creating a task"""
-    title = StringField("Title", validators=[DataRequired()])
-    description = TextAreaField("Description", validators=[Optional()])
+    title = StringField("Title", validators=[DataRequired(), Length(min=3, max=50)])
+    description = TextAreaField("Description", validators=[Optional(), Length(max=500)])
     status = SelectField("Status",
                          choices=[
                              (status.value, status.name.lower().replace("_"," ").title())
@@ -41,15 +41,33 @@ class CreateTaskForm(FlaskForm):
 
 class CreateCommentForm(FlaskForm):
     """Form for creating a comment"""
-    content = TextAreaField("Content", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired(), Length(max=500)])
     submit = SubmitField("Send")
 
-@blueprint.route("/projects", methods=["GET"])
+class CreateProjectForm(FlaskForm):
+    """Form for creating a project"""
+    name = StringField("Name", validators=[DataRequired(), Length(min=3, max=50)])
+    description = TextAreaField("Description", validators=[Optional(), Length(max=500)])
+    submit = SubmitField("Create Project")
+
+@blueprint.route("/projects", methods=["GET", "POST"])
 @login_required
 def project_list_route():
     """Render the projects page"""
+    form = CreateProjectForm(request.form)
+    if request.method == "POST" and form.validate_on_submit():
+        name = form.name.data
+        description = form.description.data if form.description.data else None
+        project_service.create(name=name, creator_id=current_user.id,
+                               created_at=datetime.now().isoformat(),
+                               updated_at=datetime.now().isoformat(),
+                               description=description)
+        form.name.data = ""
+        form.description.data = ""
+        flash("Project created successfully", "success")
+
     projects_with_roles = project_service.get_all_by_user_with_role(current_user.id)
-    return render_template("project_list.html", projects_with_roles=projects_with_roles)
+    return render_template("project_list.html", form=form, projects_with_roles=projects_with_roles)
 
 @blueprint.route("/projects/<int:project_id>", methods=["GET", "POST"])
 @login_required

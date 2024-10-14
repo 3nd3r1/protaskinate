@@ -32,6 +32,10 @@ class ProjectService:
         """Delete a project"""
         return project_repository.delete({"id": project_id})
 
+    def create(self, **kwargs) -> Optional[Project]:
+        """Create a project"""
+        return project_repository.create(kwargs)
+
     def check_user_read_access(self, user_id: int, project_id: int) -> bool:
         """Check if a user has read-access to a project"""
         return project_repository.get_user_role(user_id, project_id) in [

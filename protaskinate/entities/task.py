@@ -3,9 +3,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
-from protaskinate.entities.comment import Comment
 from protaskinate.utils.validation import validate_enum, validate_type
 
 
