@@ -17,11 +17,13 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - User can now addditionally view description, creator, role, updated_at and created_at for all projects user has access to 
 - User can now assign and de-assign roles for projects user has admin access to
 - User can now create a project
+- User can now view all tasks of project user has access to in a kanban board
 
 ### Fixed
 
 - Important buttons are now purple to fit the color scheme
 - Page content has been divided into logical sections
+- When a project is selected, the navbar shows navigations for that project
 
 ## [v0.2.0-beta] - 2024-10-01
 
