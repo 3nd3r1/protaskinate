@@ -5,7 +5,7 @@
 <div class="p-4">
     <div class="card">
         <header class="card-header">
-            <p class="card-header-title">task-{{ task.id }}</p>
+            <p class="card-header-title"><span>{{project.name}}</span><span class="mx-2">/</span><span>task-{{ task.id }}</span></p>
             <div>
                 <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
                     {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
@@ -28,60 +28,61 @@
         </header>
         <div class="card-content">
             <div class="content is-flex" style="gap: 16px">
-                <div class="container" style="flex-basis: 75%">
-                    <section class="hero is-small">
-                        <div class="hero-body">
-                            <h3 class="title">{{ task.title }}</h3>
-                            <p class="subtitle">{% if task.description != None %}{{ task.description }}{% endif %}</p>
+                <div class="container is-flex is-flex-direction-column" style="flex-basis: 75%; gap: 2em;">
+                    <div>
+                        <h2 class="title is-3">{{ task.title }}</h2>
+                    </div>
+                    <div>
+                        <h3>Description</h3>
+                        <div class="content py-2">
+                            <p>{{ task.description }}</p>
                         </div>
-                    </section>
-                    <section class="section is-small">
-                        <div>
-                            <h3>Comments</h3>
-                            <div class="is-flex mb-4">
-                                <div>
-                                    <span class="icon is-large">
-                                        <i class="fas fa-user fa-xl"></i>
-                                    </span>
-                                </div>
-                                <div class="field is-flex-grow-1">
-                                    <form method="POST">
-                                        {{ form.hidden_tag() }}
-                                        <div class="field">
-                                            <div class="control">
-                                                {{ form.content(class="textarea") }}
-                                            </div>
-                                        </div>
-                                        <div class="field">
-                                            <div class="control">
-                                                {{ form.submit(class="button is-link") }}
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
+                    </div>
+                    <div>
+                        <h3>Comments</h3>
+                        <div class="is-flex mb-4">
+                            <div>
+                                <span class="icon is-large">
+                                    <i class="fas fa-user fa-xl"></i>
+                                </span>
                             </div>
-                            <div class="is-flex is-flex-direction-column" style="gap: 8px">
-                                {% for comment in comments %}
-                                    <div class="is-flex">
-                                        <div>
-                                             <span class="icon is-large">
-                                                <i class="fas fa-user fa-xl"></i>
-                                             </span>
-                                        </div>
-                                        <div>
-                                            <div class="is-flex is-align-items-center" style="gap: 4px">
-                                                <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
-                                                <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
-                                            </div>
-                                            <div class="content">
-                                                <p>{{ comment.content }}</p>
-                                            </div>
+                            <div class="field is-flex-grow-1">
+                                <form method="POST">
+                                    {{ form.hidden_tag() }}
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.content(class="textarea") }}
                                         </div>
                                     </div>
-                                {% endfor %}
+                                    <div class="field">
+                                        <div class="control">
+                                            {{ form.submit(class="button is-link") }}
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </section>
+                        <div class="is-flex is-flex-direction-column" style="gap: 8px">
+                            {% for comment in comments %}
+                                <div class="is-flex">
+                                    <div>
+                                         <span class="icon is-large">
+                                            <i class="fas fa-user fa-xl"></i>
+                                         </span>
+                                    </div>
+                                    <div>
+                                        <div class="is-flex is-align-items-center" style="gap: 4px">
+                                            <strong class="is-bold">{{ users_dict[comment.creator_id].username }}</strong>
+                                            <p class="is-size-7">{{ comment.created_at.strftime("%d/%m/%Y") }}</p>
+                                        </div>
+                                        <div class="content">
+                                            <p>{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div class="field">

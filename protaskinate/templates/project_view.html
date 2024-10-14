@@ -6,7 +6,7 @@
 {% block content %}
     <section class="section">
         <div class="container">
-            <h3 class="title is-3">Project Details</h3>
+            <h3 class="title is-4">Project Details</h3>
             <nav class="level">
                 <div class="level-item has-text-centered">
                     <div>
@@ -31,7 +31,7 @@
     </section>
     <section class="section">
         <div class="container">
-            <h3 class="title">Tasks</h3>
+            <h3 class="title is-4">Tasks</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -93,7 +93,7 @@
     </section>
     <section class="section">
         <div class="container">
-            <h3 class="title is-3">Create Task</h3>
+            <h3 class="title is-4">Create Task</h3>
             <form method="POST">
                 {{ disable_form_if_no_write_access(user_project_role) }}
                 {{ form.hidden_tag() }}
