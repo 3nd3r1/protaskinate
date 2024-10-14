@@ -61,6 +61,16 @@ def project_view_route(project_id: int):
                            project_users=project_users,
                            users_dict=users_dict)
 
+@blueprint.route("/projects/<int:project_id>/board", methods=["GET"])
+@login_required
+@project_read_access_required
+def project_board_route(project_id: int):
+    """Render the project board view page"""
+    project = project_service.get_by_id(project_id)
+    tasks = task_service.get_all_by_project(project_id)
+    user_project_role = project_service.get_user_role(current_user.id, project_id)
+    return render_template("project_board.html", project=project, tasks=tasks, user_project_role=user_project_role)
+
 @blueprint.route("/projects/<int:project_id>/delete", methods=["POST"])
 @login_required
 @project_update_access_required

@@ -33,8 +33,30 @@
                 {% if current_user.is_authenticated %}
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
-                        <li><a href="{{ url_for("dashboard.dashboard_route") }}" class="{% if url_for("dashboard.dashboard_route") in request.path %}is-active{% endif %}">Dashboard</a></li>
-                        <li><a href="{{ url_for("project.project_list_route") }}" class="{% if url_for("project.project_list_route") in request.path %}is-active{% endif %}">Projects</a></li>
+                        <li><a href="{{ url_for("dashboard.dashboard_route") }}" class="{% if url_for("dashboard.dashboard_route") == request.path %}is-active{% endif %}">Dashboard</a></li>
+                        <li>
+                            <a href="{{ url_for("project.project_list_route") }}" class="{% if url_for("project.project_list_route") == request.path %}is-active{% endif %}">Projects</a>
+                            {% if project %}
+                            <ul class="menu-list">
+                                <li>
+                                    <a href="{{ url_for("project.project_view_route", project_id=project.id) }}" class="{% if url_for("project.project_view_route", project_id=project.id) == request.path %}is-active{% endif %}">View</a>
+                                    {% if task %}
+                                    <ul class="menu-list">
+                                        <li>
+                                            <a href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}" 
+                                               class="{% if url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) == request.path %}is-active{% endif %}">
+                                                {{ task.title }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <a href="{{ url_for("project.project_board_route", project_id=project.id) }}" class="{% if url_for("project.project_board_route", project_id=project.id) == request.path %}is-active{% endif %}">Board</a>
+                                </li>
+                            </ul>
+                            {% endif %}
+                        </li>
                     </ul>
                     <p class="menu-label">User ({{ current_user.username }})</p>
                     <ul class="menu-list">

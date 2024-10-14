@@ -10,8 +10,8 @@ class TaskService:
     """Class representing a service for tasks"""
     def get_all_by_project(self,
                 project_id: int,
-                order_by_fields: Optional[List[str]],
-                reverse: Optional[List[bool]]) -> List[Task]:
+                order_by_fields: Optional[List[str]] = None,
+                reverse: Optional[List[bool]] = None) -> List[Task]:
         """Get all tasks by project"""
         return task_repository.get_all({"project_id": project_id}, order_by_fields, reverse)
 

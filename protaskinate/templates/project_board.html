@@ -1,0 +1,120 @@
+{% macro status_task_cards(project, task, status) %}
+{% for task in tasks %}
+{% if task.status.value == status %}
+<div draggable="true" class="card task">
+    <header class="card-header">
+        <p class="card-header-title">{{task.title}}</p>
+        <form action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}" method="POST">
+            <input type="hidden" name="status" value="{{status}}">
+        </form>
+    </header>
+</div>
+{% endif %}
+{% endfor %}
+{% endmacro %}
+{% extends "base.html" %}
+{% block title %}{{project.name}}{% endblock %}
+{% block hero_title %}{{project.name}} - Board{% endblock %}
+{% block hero_description %}Kanban board for all project tasks{% endblock %}
+{% block content %}
+<div class="columns">
+    <div class="column" data-status="open">
+        <div>
+            <h3 class="title is-4">Open</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%">
+            {{ status_task_cards(project, tasks, "open") }}
+        </div>
+    </div>
+    <div class="column" data-status="in_progress">
+        <div>
+            <h3 class="title is-4">In Progress</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%;">
+            {{ status_task_cards(project, tasks, "in_progress") }}
+        </div>
+    </div>
+    <div class="column" data-status="done">
+        <div>
+            <h3 class="title is-4">Done</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%">
+            {{ status_task_cards(project, tasks, "done") }}
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".task").forEach((task) => {
+            task.addEventListener("dragstart", (event) => {
+                event.dataTransfer.effectsAllowed = "move";
+                event.dataTransfer.setData("text/plain", "");
+                requestAnimationFrame(() => event.target.classList.add("dragging"));
+            });
+
+            task.addEventListener("dragend", (event) => {
+                dragging = document.querySelector(".dragging");
+                statusColumn = dragging.closest(".column");
+                statusInput = dragging.querySelector("input[name='status']");
+
+                if (statusInput.value !== statusColumn.dataset.status) {
+                    statusInput.value = statusColumn.dataset.status;
+                    dragging.querySelector("form").submit();
+                }
+
+                requestAnimationFrame(() => event.target.classList.remove("dragging"));
+            });
+        });
+
+        document.querySelectorAll(".tasks").forEach((tasks) => {
+            tasks.addEventListener("drop", (event) => {
+                event.preventDefault();
+            });
+
+            tasks.addEventListener("dragover", (event) => {
+                event.preventDefault();
+
+                const dragging = document.querySelector(".dragging");
+                const closest = event.target.closest(".task, .tasks");
+
+                if (!closest || closest === dragging) return;
+
+                if (closest.classList.contains("tasks")) {
+                    console.log("tasks");
+                    const lastTask = closest.lastElementChild;
+                    if (!lastTask) {
+                        closest.appendChild(dragging);
+                    } else {
+                        const {bottom} = lastTask.getBoundingClientRect();
+                        if (event.clientY > bottom) {
+                            closest.appendChild(dragging);
+                        }
+                    }
+                } else {
+                    const {top, height} = closest.getBoundingClientRect();
+                    const distance = top + height / 2;
+
+                    if (event.clientY < distance) {
+                        closest.before(dragging);
+                    } else {
+                        closest.after(dragging);
+                    }
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .task {
+        cursor: move;
+    }
+    .task.dragging {
+        cursor: default;
+        box-shadow: none;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
