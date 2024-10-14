@@ -50,7 +50,7 @@
             </aside>
             <div style="margin-left: 350px">
                 <div class="container">
-                    <div class="my-4 is-flex is-flex-direction-column" style="gap: 8px">
+                    <div class="is-flex is-flex-direction-column mt-4" style="gap: 8px; position: fixed; z-index: 10; width: 75%;">
                         {% with messages = get_flashed_messages(with_categories=true) %}
                             {% if messages %}
                                     {% for category, message in messages %}

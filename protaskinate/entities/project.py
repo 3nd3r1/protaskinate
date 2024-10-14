@@ -44,3 +44,12 @@ class ProjectWithRole:
         validate_type(self.project, Project, "project")
         self.role = validate_enum(self.role, ProjectRole, "role")
 
+@dataclass
+class ProjectUser:
+    """Class representing a user in a project"""
+    user: User
+    role: ProjectRole
+
+    def __post_init__(self):
+        validate_type(self.user, User, "user")
+        self.role = validate_enum(self.role, ProjectRole, "role")

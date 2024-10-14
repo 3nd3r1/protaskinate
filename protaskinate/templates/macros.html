@@ -25,6 +25,20 @@
     </form>
 {% endmacro %}
 
+{% macro update_project_user_role_form(project, project_user) %}
+    <form method="POST" action="{{url_for("project.project_user_edit_route", project_id=project.id, user_id=project_user.user.id)}}">
+        <div class="control">
+            <div class="select">
+                <select name="role" class="project-user-role-select">
+                    <option value="admin" {% if project_user.role.value == "admin" %}selected{% endif %}>Admin</option>
+                    <option value="writer" {% if project_user.role.value == "writer" %}selected{% endif %}>Writer</option>
+                    <option value="reader" {% if project_user.role.value == "reader" %}selected{% endif %}>Reader</option>
+                </select>
+            </div>
+        </div>
+    </form>
+{% endmacro %}
+
 {% macro update_task_status_form(project, task, user_project_role, current_user) %}
     <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
         {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}

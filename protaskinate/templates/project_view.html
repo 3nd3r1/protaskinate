@@ -1,4 +1,4 @@
-{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, disable_form_if_no_write_access, format_datetime %}
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, disable_form_if_no_write_access, format_datetime, update_project_user_role_form %}
 {% extends "base.html" %}
 {% block title %}{{project.name}}{% endblock %}
 {% block hero_title %}{{project.name}}{% endblock %}
@@ -102,66 +102,109 @@
             <h3 class="title is-4">Create Task</h3>
             <form method="POST">
                 {{ disable_form_if_no_write_access(user_project_role) }}
-                {{ form.hidden_tag() }}
+                {{ create_task_form.hidden_tag() }}
                 <div class="field">
-                    {{ form.title.label(class="label") }}
+                    {{ create_task_form.title.label(class="label") }}
                     <div class="control">
-                        {{ form.title(class="input") }}
+                        {{ create_task_form.title(class="input") }}
                     </div>
-                    {% for error in form.title.errors %}
+                    {% for error in create_task_form.title.errors %}
                         <p class="help is-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="field">
-                    {{ form.description.label(class="label") }}
+                    {{ create_task_form.description.label(class="label") }}
                     <div class="control">
-                        {{ form.description(class="textarea") }}
+                        {{ create_task_form.description(class="textarea") }}
                     </div>
-                    {% for error in form.description.errors %}
+                    {% for error in create_task_form.description.errors %}
                         <p class="help is-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="field">
-                    {{ form.status.label(class="label") }}
+                    {{ create_task_form.status.label(class="label") }}
                     <div class="control">
                         <div class="select">
-                            {{ form.status(class="input") }}
+                            {{ create_task_form.status(class="input") }}
                         </div>
                     </div>
                 </div>
                 <div class="field">
-                    {{ form.priority.label(class="label") }}
+                    {{ create_task_form.priority.label(class="label") }}
                     <div class="control">
                         <div class="select">
-                            {{ form.priority(class="input") }}
+                            {{ create_task_form.priority(class="input") }}
                         </div>
                     </div>
                 </div>
                 <div class="field">
-                    {{ form.assignee_id.label(class="label") }}
+                    {{ create_task_form.assignee_id.label(class="label") }}
                     <div class="control">
                         <div class="select">
-                            {{ form.assignee_id(class="input") }}
+                            {{ create_task_form.assignee_id(class="input") }}
                         </div>
                     </div>
                 </div>
                 <div class="field">
-                    {{ form.deadline.label(class="label") }}
+                    {{ create_task_form.deadline.label(class="label") }}
                     <div class="control">
-                        {{ form.deadline(class="input") }}
+                        {{ create_task_form.deadline(class="input") }}
                     </div>
-                    {% for error in form.deadline.errors %}
+                    {% for error in create_task_form.deadline.errors %}
                         <p class="help is-danger">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="field">
                     <div class="control">
-                        {{ form.submit(class="button is-link") }}
+                        {{ create_task_form.submit(class="button is-link") }}
                     </div>
                 </div>
             </form>
         </div>
     </section>
+    {% if user_project_role.value == "admin" %}
+        <section class="section" id="update-project-users">
+            <div class="container">
+                <h3 class="title is-4">Update Project Users</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project_user in project_users %}
+                            <tr>
+                                <td>{{ project_user.user.username }}</td>
+                                <td>
+                                    {{ update_project_user_role_form(project, project_user) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <form method="POST">
+                    {{ create_project_user_form.hidden_tag() }}
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <div class="select">
+                                {{ create_project_user_form.user_id(class="input") }}
+                            </div>
+                        </div>
+                        <div class="control">
+                            <div class="select">
+                                {{ create_project_user_form.role(class="input") }}
+                            </div>
+                        </div>
+                        <div class="control">
+                            {{ create_project_user_form.submit(class="button is-link") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    {% endif %}
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".task-status-select").forEach(function(selectElement) {
@@ -189,6 +232,11 @@
                 if (!confirm("Are you sure you want to delete this task?")) {
                     event.preventDefault();
                 }
+            });
+        });
+        document.querySelectorAll(".project-user-role-select").forEach(function(selectElement) {
+            selectElement.addEventListener("change", function() {
+                this.form.submit();
             });
         });
     });

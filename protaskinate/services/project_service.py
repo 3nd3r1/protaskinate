@@ -2,7 +2,7 @@
 
 from typing import List, Optional
 
-from protaskinate.entities.project import Project, ProjectRole, ProjectWithRole
+from protaskinate.entities.project import Project, ProjectRole, ProjectUser, ProjectWithRole
 from protaskinate.repositories import project_repository
 from protaskinate.services import task_service
 
@@ -20,6 +20,10 @@ class ProjectService:
             ProjectRole.READER, ProjectRole.WRITER, ProjectRole.ADMIN
         ])
 
+    def get_all_users_in_project(self, project_id: int) -> List[ProjectUser]:
+        """Get all users in a project"""
+        return project_repository.get_all_users_by_project(project_id)
+
     def get_by_id(self, project_id: int) -> Optional[Project]:
         """Get project by id"""
         return project_repository.get({"id": project_id})
@@ -35,6 +39,15 @@ class ProjectService:
     def create(self, **kwargs) -> Optional[Project]:
         """Create a project"""
         return project_repository.create(kwargs)
+
+    def add_user(self, project_id: int,
+                       user_id: int, role: ProjectRole) -> Optional[ProjectUser]:
+        """Add a user to a project"""
+        return project_repository.create_project_user(project_id, user_id, role)
+
+    def update_user_role(self, project_id: int, user_id: int, role: ProjectRole) -> None:
+        """Update the role of a user in a project"""
+        return project_repository.update_user_role(project_id, user_id, role)
 
     def check_user_read_access(self, user_id: int, project_id: int) -> bool:
         """Check if a user has read-access to a project"""
