@@ -75,6 +75,20 @@ poetry run invoke dev
 
 ## Weekly Report
 
+### Loppupalautus - 2024-10-15
+
+The project is now finished. The project has a good code structure and clean code. All features except the visualization feature have been implemented. After adding some unittests for tasks and projects, the test coverage has risen to around 60%.
+
+Addressing some of the feedback in labtool:
+- The CSRF vulnerability has been fixed
+- After a thorough code review, I believe there are no SQL injection vulnerabilities present. While I am formatting some queries, all user inputs are sanitized and passed as parameters. The formatting applied to table and field names does not involve any user input.
+- I added a COUNT query to the dashboard, but I am not sure if that is enough. I couldn't think of any other aggregates that would be useful.
+- I removed all HTML5 client-side validation so all the errors are displayed at once. However, I don't think disabling client-side validation is a good idea, since it will add more load to the server.
+
+The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+
+More info about updates in the [changelog](docs/changelog.md).
+
 ### Välipalautus 3 - 2024-10-1
 
 The project is almost finished. The project still has good code structure and clean code. Many more features have been implemented, but some are still left. Test coverage is still very poor.
