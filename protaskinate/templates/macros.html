@@ -1,0 +1,128 @@
+{% macro disable_form_if_no_task_update_access(user_project_role, task, current_user) %}
+    {% if user_project_role.value != "admin" and (user_project_role.value != "writer" or task.creator_id != current_user.id) %}
+        <fieldset disabled>
+    {% endif %}
+{% endmacro %}
+
+{% macro disable_form_if_no_write_access(user_project_role) %}
+    {% if user_project_role.value not in ("admin", "writer") %}
+        <fieldset disabled>
+    {% endif %}
+{% endmacro %}
+
+{% macro disable_form_if_no_update_access(user_project_role) %}
+    {% if user_project_role.value != "admin" %}
+        <fieldset disabled>
+    {% endif %}
+{% endmacro %}
+
+{% macro csrf_token_input() %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+{% endmacro %}
+
+{% macro delete_project_form(project_with_role) %}
+    <form method="POST" action="{{ url_for("project.project_delete_route", project_id=project_with_role.project.id) }}" class="card-footer-item project-delete-form p-0">
+        {{ disable_form_if_no_update_access(project_with_role.role) }}
+        {{ csrf_token_input() }}
+        <button type="submit" class="{% if project_with_role.role.value != "admin" %}has-text-dark{% else %}has-text-link{% endif %}" style="width: 100%; height: 100%; {% if project_with_role.role.value != "admin" %}cursor: not-allowed{% endif %}">
+            Delete
+        </button>
+    </form>
+{% endmacro %}
+
+{% macro update_project_user_role_form(project, project_user) %}
+    <form method="POST" action="{{url_for("project.project_user_edit_route", project_id=project.id, user_id=project_user.user.id)}}">
+        {{ csrf_token_input() }}
+        <div class="control">
+            <div class="select">
+                <select name="role" class="project-user-role-select">
+                    <option value="admin" {% if project_user.role.value == "admin" %}selected{% endif %}>Admin</option>
+                    <option value="writer" {% if project_user.role.value == "writer" %}selected{% endif %}>Writer</option>
+                    <option value="reader" {% if project_user.role.value == "reader" %}selected{% endif %}>Reader</option>
+                </select>
+            </div>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro update_task_status_form(project, task, user_project_role, current_user) %}
+    <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+        {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+        {{ csrf_token_input() }}
+        <div class="control">
+            <div class="select">
+                <select name="status" class="task-status-select">
+                    <option value="open" {% if task.status.value == "open" %}selected{% endif %}>Open</option>
+                    <option value="in_progress" {% if task.status.value == "in_progress" %}selected{% endif %}>In Progress</option>
+                    <option value="done" {% if task.status.value == "done" %}selected{% endif %}>Done</option>
+                </select>
+            </div>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro update_task_priority_form(project, task, user_project_role, current_user) %}
+    <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
+        {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+        {{ csrf_token_input() }}
+        <div class="control">
+            <div class="select">
+                <select class="task-priority-select" data-task-id="{{ task.id }}" name="priority">
+                    <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if task.priority.value == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if task.priority.value == 'high' %}selected{% endif %}>High</option>
+                    <option value="very_high" {% if task.priority.value == 'very_high' %}selected{% endif %}>Very High</option>
+                </select>
+            </div>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro update_task_assignee_form(project, task, user_project_role, current_user, users_dict) %}
+    <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
+        {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+        {{ csrf_token_input() }}
+        <div class="control">
+            <div class="select">
+                <select class="task-assignee-select" data-task-id="{{ task.id }}" name="assignee_id">
+                    <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
+                    {% for user in users_dict.values() %}
+                        <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro update_task_deadline_form(project, task, user_project_role, current_user) %}
+    <form method="POST" action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}">
+        {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+        {{ csrf_token_input() }}
+        <div class="control">
+            <input name="deadline" type="date" class="task-deadline-date input" value="{% if task.deadline != None %}{{ task.deadline.strftime("%Y-%m-%d") }}{% endif %}"/>
+        </div>
+    </form>
+{% endmacro %}
+
+{% macro format_datetime(datetime) %}
+    <time datetime="{{ datetime.isoformat() }}+00:00">{{ datetime.strftime("%Y-%m-%d") }}</time>
+{% endmacro %}
+
+{% macro nav_link(href, text) %}
+    <a href="{{ href }}" class="{% if href == request.path %}is-active{% endif %}">
+        {{ text }}
+    </a>
+{% endmacro %}
+
+{% macro task_priority_icon(priority) %}
+    {% if priority.value == "low" %}
+    <i class="fas fa-arrow-down has-text-success"></i>
+    {% elif priority.value == "medium" %}
+    <i class="fas fa-arrow-down has-text-info"></i>
+    {% elif priority.value == "high" %}
+    <i class="fas fa-arrow-up has-text-warning"></i>
+    {% elif priority.value == "very_high" %}
+    <i class="fas fa-arrow-up has-text-danger"></i>
+    {% endif %}
+{% endmacro %}

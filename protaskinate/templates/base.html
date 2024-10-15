@@ -1,3 +1,4 @@
+{% from "macros.html" import nav_link %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -33,8 +34,29 @@
                 {% if current_user.is_authenticated %}
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
-                        <li><a href="{{ url_for("dashboard.dashboard_route") }}" class="{% if url_for("dashboard.dashboard_route") in request.path %}is-active{% endif %}">Dashboard</a></li>
-                        <li><a href="{{ url_for("project.project_list_route") }}" class="{% if url_for("project.project_list_route") in request.path %}is-active{% endif %}">Projects</a></li>
+                        <li>
+                            {{ nav_link(url_for("dashboard.dashboard_route"), "Dashboard") }}
+                        </li>
+                        <li>
+                            {{ nav_link(url_for("project.project_list_route"), "Projects") }}
+                            {% if project %}
+                            <ul class="menu-list">
+                                <li>
+                                    {{ nav_link(url_for("project.project_view_route", project_id=project.id), "View") }}
+                                    {% if task %}
+                                        <ul class="menu-list">
+                                            <li>
+                                                {{ nav_link(url_for("project.project_task_view_route", project_id=project.id, task_id=task.id), task.title) }}
+                                            </li>
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    {{ nav_link(url_for("project.project_board_route", project_id=project.id), "Board") }}
+                                </li>
+                            </ul>
+                            {% endif %}
+                        </li>
                     </ul>
                     <p class="menu-label">User ({{ current_user.username }})</p>
                     <ul class="menu-list">
@@ -49,35 +71,43 @@
                 {% endif %}
             </aside>
             <div style="margin-left: 350px">
-                <section class="section column">
-                    <div class="container">
-                        <div class="mb-4 is-flex is-flex-direction-column" style="gap: 8px">
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                        {% for category, message in messages %}
-                                            <div class="notification is-{% if category == "error" %}danger{% elif category == "success"%}success{% else %}info{% endif %}">
-                                                <button class="delete"></button>
-                                                {{ message }}
-                                            </div>
-                                        {% endfor %}
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-                        {% block content %}{% endblock %}
+                <div class="container">
+                    <div class="is-flex is-flex-direction-column mt-4" style="gap: 8px; position: fixed; z-index: 10; width: 75%;">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="notification is-{% if category == "error" %}danger{% elif category == "success"%}success{% else %}info{% endif %}">
+                                            <button class="delete"></button>
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                     </div>
-                </section>
+                    <section class="hero">
+                        <div class="hero-body">
+                            <h1 class="title is-2">{% block hero_title %}{% endblock %}</h1>
+                            <h2 class="subtitle">{% block hero_description %}{% endblock %}</h2>
+                        </div>
+                    </section>
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </div>
 	</body>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-          (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-            const $notification = $delete.parentNode;
+            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                const $notification = $delete.parentNode;
 
-            $delete.addEventListener('click', () => {
-              $notification.parentNode.removeChild($notification);
+                $delete.addEventListener('click', () => {
+                $notification.parentNode.removeChild($notification);
+                });
             });
-          });
+            document.querySelectorAll('time').forEach($e => {
+                const date = new Date($e.dateTime);
+                $e.innerHTML = date.toLocaleString();
+            });
         });
     </script>
 </html>

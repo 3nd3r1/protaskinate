@@ -1,39 +1,73 @@
+{% from "macros.html" import delete_project_form, format_datetime %}
 {% extends "base.html" %}
 {% block title %}Projects{% endblock %}
+{% block hero_title %}Projects{% endblock %}
+{% block hero_description%}View all projects{% endblock %}
 {% block content %}
-<h2 class="title is-2">Projects</h2>
-<div class="fixed-grid has-3-cols">
-    <div class="grid">
-        {% for project in projects %}
-            <div class="cell">
-                <div class="card">
-                    <header class="card-header">
-                        <p class="card-header-title">{{ project.name }}</p>
-                    </header>
-                    <div class="card-content">
-                        <div class="content">
+    <section class="section">
+        <div class="container">
+            <div class="fixed-grid has-3-cols">
+                <div class="grid">
+                    {% for pwr in projects_with_roles %}
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="content">
+                                        <h2 class="title">{{ pwr.project.name }}</h2>
+                                        <p>{% if pwr.project.description %}{{ pwr.project.description }}{% endif %}</p>
+                                    </div>
+                                </div>
+                                <footer class="card-footer">
+                                    <a href="{{ url_for("project.project_view_route", project_id=pwr.project.id) }}" class="card-footer-item">View</a>
+                                    {{ delete_project_form(pwr) }}
+                                </footer>
+                            </div>
                         </div>
-                    </div>
-                    <footer class="card-footer">
-                        <a href="{{ url_for("project.project_view_route", project_id=project.id) }}" class="card-footer-item">View</a>
-                        <form method="POST" action="{{ url_for("project.project_delete_route", project_id=project.id) }}" class="card-footer-item project-delete-form p-0">
-                            <button type="submit" class="has-text-link" style="width: 100%; height: 100%">Delete</button>
-                        </form>
-                    </footer>
+                    {% endfor %}
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-<div>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".project-delete-form").forEach(form => {
-            form.addEventListener("submit", event => {
-                if (!confirm("Are you sure you want to delete this project and all of its contents?")) {
-                    event.preventDefault();
-                }
+            <div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h3 class="title is-4">Create Project</h3>
+            <form method="POST" novalidate="true">
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                        {{ form.name(class="input") }}
+                    </div>
+                    {% for error in form.name.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        {{ form.description(class="textarea") }}
+                    </div>
+                    {% for error in form.description.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.submit(class="button is-link") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".project-delete-form").forEach(form => {
+                form.addEventListener("submit", event => {
+                    if (!confirm("Are you sure you want to delete this project and all of its contents?")) {
+                        event.preventDefault();
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 {% endblock %}

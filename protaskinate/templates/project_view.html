@@ -1,171 +1,260 @@
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, disable_form_if_no_write_access, format_datetime, update_project_user_role_form, csrf_token_input %}
 {% extends "base.html" %}
 {% block title %}{{project.name}}{% endblock %}
+{% block hero_title %}{{project.name}}{% endblock %}
+{% block hero_description %}{% if project.description %}{{project.description}}{% endif %}{% endblock %}
 {% block content %}
-<h2 class="title is-2">{{project.name}}</h2>
-<div>
-    <div class="container mb-5">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Assignee</th>
-                    <th>Deadline</th>
-                    <th>Created At</th>
-                    <th>Created By</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for task in tasks %}
-                <tr data-task-id="{{task.id}}">
-                    <td class="is-align-content-center">{{ task.title }}</td>
-                    <td>
-                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
-                            <div class="select">
-                                <select class="task-status-select" data-task-id="{{ task.id }}" name="status">
-                                    <option value="open" {% if task.status.value == 'open' %}selected{% endif %}>Open</option>
-                                    <option value="in_progress" {% if task.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
-                                    <option value="done" {% if task.status.value == 'done' %}selected{% endif %}>Done</option>
-                                </select>
-                            </div>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
-                            <div class="select">
-                                <select class="task-priority-select" data-task-id="{{ task.id }}" name="priority">
-                                    <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Low</option>
-                                    <option value="medium" {% if task.priority.value == 'medium' %}selected{% endif %}>Medium</option>
-                                    <option value="high" {% if task.priority.value == 'high' %}selected{% endif %}>High</option>
-                                    <option value="very_high" {% if task.priority.value == 'very_high' %}selected{% endif %}>Very High</option>
-                                </select>
-                            </div>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="POST" action={{ url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id) }}>
-                            <div class="select">
-                                <select class="task-assignee-select" data-task-id="{{ task.id }}" name="assignee_id">
-                                    <option value="0" {% if task.assignee_id is none %}selected{% endif %}>Unassigned</option>
-                                    {% for user in users_dict.values() %}
-                                        <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </form>
-                    </td>
-                    <td class="is-align-content-center">
-                        {% if task.deadline != None %}
-                            {{ task.deadline.strftime("%d/%m/%Y") }}
-                        {% else %}
-                            None
-                        {% endif %}
-                    </td>
-                    <td class="is-align-content-center">
-                        {% if task.created_at != None %}
-                            {{ task.created_at.strftime("%d/%m/%Y") }}
-                        {% else %}
-                            None
-                        {% endif %}
-                    </td>
-                    <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
-                    <td class="is-align-content-center">
-                        <a href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}" class="button">
-                            <span class="icon is-small">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                        </a>
-                    </td>
-                    <td class="is-align-content-center">
-                        <form method="POST" class="task-delete-form" action={{ url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id) }}>
-                            <button type="submit" class="button">
+    <section class="section">
+        <div class="container">
+            <h3 class="title is-4">Project Details</h3>
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Created By</p>
+                        <p class="title">{{ users_dict[project.creator_id].username }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Your Role</p>
+                        <p class="title">{{ user_project_role.value.title() }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Created At</p>
+                        <p class="title">{{ format_datetime(project.created_at) }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Updated At</p>
+                        <p class="title">{{ format_datetime(project.updated_at) }}</p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h3 class="title is-4">Tasks</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 100%">Title</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Assignee</th>
+                        <th>Deadline</th>
+                        <th>Created By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for task in tasks %}
+                    <tr data-task-id="{{task.id}}">
+                        <td class="is-align-content-center">{{ task.title }}</td>
+                        <td>
+                            {{ update_task_status_form(project, task, user_project_role, current_user) }}
+                        </td>
+                        <td>
+                            {{ update_task_priority_form(project, task, user_project_role, current_user) }}
+                        </td>
+                        <td>
+                            {{ update_task_assignee_form(project, task, user_project_role, current_user, users_dict) }}
+                        </td>
+                        <td>
+                            {{ update_task_deadline_form(project, task, user_project_role, current_user) }}
+                        </td>
+                        <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
+                        <td class="is-align-content-center">
+                            <a href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}" class="button">
                                 <span class="icon is-small">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="fas fa-eye"></i>
                                 </span>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h3 class="title is-3">Create Task</h3>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            <div class="field">
-                {{ form.title.label(class="label") }}
-                {{ form.title(class="input") }}
-                {% for error in form.title.errors %}
-                    <p class="help is-danger">{{ error }}</p>
+                            </a>
+                        </td>
+                        <td class="is-align-content-center">
+                            <form method="POST" class="task-delete-form" action={{ url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id) }}>
+                                {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+                                {{ csrf_token_input() }}
+                                <button type="submit" class="button">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                 {% endfor %}
-            </div>
-            <div class="field">
-                {{ form.description.label(class="label") }}
-                {{ form.description(class="textarea") }}
-                {% for error in form.description.errors %}
-                    <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="field">
-                {{ form.status.label(class="label") }}
-                <div class="select">
-                    {{ form.status(class="input") }}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h3 class="title is-4">Create Task</h3>
+            <form method="POST" novalidate="true">
+                {{ disable_form_if_no_write_access(user_project_role) }}
+                {{ create_task_form.hidden_tag() }}
+                <div class="field">
+                    {{ create_task_form.title.label(class="label") }}
+                    <div class="control">
+                        {{ create_task_form.title(class="input") }}
+                    </div>
+                    {% for error in create_task_form.title.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
                 </div>
-            </div>
-            <div class="field">
-                {{ form.priority.label(class="label") }}
-                <div class="select">
-                    {{ form.priority(class="input") }}
+                <div class="field">
+                    {{ create_task_form.description.label(class="label") }}
+                    <div class="control">
+                        {{ create_task_form.description(class="textarea") }}
+                    </div>
+                    {% for error in create_task_form.description.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
                 </div>
-            </div>
-            <div class="field">
-                {{ form.assignee_id.label(class="label") }}
-                <div class="select">
-                    {{ form.assignee_id(class="input") }}
+                <div class="field">
+                    {{ create_task_form.status.label(class="label") }}
+                    <div class="control">
+                        <div class="select">
+                            {{ create_task_form.status(class="input") }}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                {{ form.deadline.label(class="label") }}
-                {{ form.deadline(class="input") }}
-                {% for error in form.deadline.errors %}
-                    <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="field">
-                <div class="control">
-                    {{ form.submit(class="button") }}
+                <div class="field">
+                    {{ create_task_form.priority.label(class="label") }}
+                    <div class="control">
+                        <div class="select">
+                            {{ create_task_form.priority(class="input") }}
+                        </div>
+                    </div>
                 </div>
+                <div class="field">
+                    {{ create_task_form.assignee_id.label(class="label") }}
+                    <div class="control">
+                        <div class="select">
+                            {{ create_task_form.assignee_id(class="input") }}
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    {{ create_task_form.deadline.label(class="label") }}
+                    <div class="control">
+                        {{ create_task_form.deadline(class="input") }}
+                    </div>
+                    {% for error in create_task_form.deadline.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ create_task_form.submit(class="button is-link") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    {% if user_project_role.value == "admin" %}
+        <section class="section" id="update-project-users">
+            <div class="container">
+                <h3 class="title is-4">Update Project Users</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project_user in project_users %}
+                            <tr>
+                                <td>{{ project_user.user.username }}</td>
+                                <td>
+                                    {{ update_project_user_role_form(project, project_user) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <form method="POST">
+                    {{ create_project_user_form.hidden_tag() }}
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <div class="select">
+                                {{ create_project_user_form.user_id(class="input") }}
+                            </div>
+                        </div>
+                        <div class="control">
+                            <div class="select">
+                                {{ create_project_user_form.role(class="input") }}
+                            </div>
+                        </div>
+                        <div class="control">
+                            {{ create_project_user_form.submit(class="button is-link") }}
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".task-status-select").forEach(function(selectElement) {
-        selectElement.addEventListener("change", function() {
-            this.form.submit();
+        </section>
+        <section class="section">
+            <div class="container">
+                <h3 class="title is-4">Activity Logs</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity_log in activity_logs %}
+                            <tr>
+                                <td>{{ users_dict[activity_log.user_id].username }}</td>
+                                <td>{{ activity_log.action.value.replace("_"," ").title() }}</td>
+                                <td>{{ format_datetime(activity_log.created_at) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% endif %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".task-status-select").forEach(function(selectElement) {
+            selectElement.addEventListener("change", function() {
+                this.form.submit();
+            });
+        });
+        document.querySelectorAll(".task-priority-select").forEach(function(selectElement) {
+            selectElement.addEventListener("change", function() {
+                this.form.submit();
+            });
+        });
+        document.querySelectorAll(".task-assignee-select").forEach(function(selectElement) {
+            selectElement.addEventListener("change", function() {
+                this.form.submit();
+            });
+        });
+        document.querySelectorAll(".task-deadline-date").forEach(function(dateElement) {
+            dateElement.addEventListener("change", function() {
+                this.form.submit();
+            });
+        });
+        document.querySelectorAll(".task-delete-form").forEach(function(formElement) {
+            formElement.addEventListener("submit", function() {
+                if (!confirm("Are you sure you want to delete this task?")) {
+                    event.preventDefault();
+                }
+            });
+        });
+        document.querySelectorAll(".project-user-role-select").forEach(function(selectElement) {
+            selectElement.addEventListener("change", function() {
+                this.form.submit();
+            });
         });
     });
-    document.querySelectorAll(".task-priority-select").forEach(function(selectElement) {
-        selectElement.addEventListener("change", function() {
-            this.form.submit();
-        });
-    });
-    document.querySelectorAll(".task-assignee-select").forEach(function(selectElement) {
-        selectElement.addEventListener("change", function() {
-            this.form.submit();
-        });
-    });
-    document.querySelectorAll(".task-delete-form").forEach(function(formElement) {
-        formElement.addEventListener("submit", function() {
-            if (!confirm("Are you sure you want to delete this task?")) {
-                event.preventDefault();
-            }
-        });
-    });
-});
-</script>
+    </script>
 {% endblock %}

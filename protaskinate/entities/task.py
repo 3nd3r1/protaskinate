@@ -3,20 +3,22 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
-from protaskinate.entities.comment import Comment
 from protaskinate.utils.validation import validate_enum, validate_type
 
 
 class TaskStatus(Enum):
     """Enumeration representing the status of a task"""
+
     OPEN = "open"
     IN_PROGRESS = "in_progress"
     DONE = "done"
 
+
 class TaskPriority(Enum):
     """Enumeration representing the priority of a task"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -44,9 +46,11 @@ class TaskPriority(Enum):
     def __ge__(self, other):
         return self.as_int() >= other.as_int()
 
+
 @dataclass
 class Task:
     """Class representing a task"""
+
     id: int
     project_id: int
     creator_id: int
@@ -54,10 +58,10 @@ class Task:
     status: TaskStatus
     priority: TaskPriority
     created_at: datetime
+    updated_at: datetime
     assignee_id: Optional[int] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
-    comments: Optional[List[Comment]] = None
 
     def __post_init__(self):
         validate_type(self.id, int, "id")
@@ -67,10 +71,7 @@ class Task:
         self.status = validate_enum(self.status, TaskStatus, "status")
         self.priority = validate_enum(self.priority, TaskPriority, "priority")
         validate_type(self.created_at, datetime, "created_at")
+        validate_type(self.updated_at, datetime, "updated_at")
         validate_type(self.assignee_id, int, "assignee_id", allow_none=True)
         validate_type(self.deadline, datetime, "deadline", allow_none=True)
         validate_type(self.description, str, "description", allow_none=True)
-        validate_type(self.comments, list, "comments", allow_none=True)
-        if self.comments:
-            for comment in self.comments:
-                validate_type(comment, Comment, "comment")

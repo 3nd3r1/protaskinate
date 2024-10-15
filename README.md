@@ -20,13 +20,13 @@
 </p>
 
 ## Key Features:
-- **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
-- **Kanban Board**: Visualize and manage tasks across different stages (To Do, In Progress, Done).
-- **Project Organization**: Organize tasks within specific projects for better clarity and tracking.
-- **User Roles**: Assign roles (Admin/User) with different access permissions.
-- **Comments and Collaboration**: Leave comments on tasks for better communication between team members.
-- **Activity Log**: Track task updates and project changes in real time.
-- **Visualization**: Easily create charts (E.g. burndown chart) to visualize your project.
+- [x] **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
+- [x] **Kanban Board**: Visualize and manage tasks across different stages (To Do, In Progress, Done).
+- [x] **Project Organization**: Organize tasks within specific projects for better clarity and tracking.
+- [x] **User Roles**: Assign roles (Admin/User) with different access permissions.
+- [x] **Comments and Collaboration**: Leave comments on tasks for better communication between team members.
+- [x] **Activity Log**: Track task updates and project changes in real time.
+- [ ] **Visualization**: Easily create charts (E.g. burndown chart) to visualize your project.
 
 ## Tech Stack:
 - **Backend**: Flask (Python)
@@ -74,6 +74,20 @@ poetry run invoke dev
 7. Open your browser and navigate to `http://localhost:5000`
 
 ## Weekly Report
+
+### Loppupalautus - 2024-10-15
+
+The project is now finished. The project has a good code structure and clean code. All features except the visualization feature have been implemented. After adding some unittests for tasks and projects, the test coverage has risen to around 60%.
+
+Addressing some of the feedback in labtool:
+- The CSRF vulnerability has been fixed
+- After a thorough code review, I believe there are no SQL injection vulnerabilities present. While I am formatting some queries, all user inputs are sanitized and passed as parameters. The formatting applied to table and field names does not involve any user input.
+- I added a COUNT query to the dashboard, but I am not sure if that is enough. I couldn't think of any other aggregates that would be useful.
+- I removed all HTML5 client-side validation so all the errors are displayed at once. However, I don't think disabling client-side validation is a good idea, since it will add more load to the server.
+
+The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+
+More info about updates in the [changelog](docs/changelog.md).
 
 ### Välipalautus 3 - 2024-10-1
 

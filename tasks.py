@@ -32,8 +32,9 @@ def generate_secret_key(ctx):
         print("File already exists - skipping generation")
     else:
         secret_key = os.urandom(12).hex()
-        ctx.run("echo 'SECRET_KEY="+secret_key+"' > .secret_key.env")
+        ctx.run("echo 'SECRET_KEY=" + secret_key + "' > .secret_key.env")
         print("Secret key generated")
+
 
 @task
 def lint(ctx):
@@ -43,7 +44,7 @@ def lint(ctx):
 
 
 @task
-def unit_test(ctx):
+def test(ctx):
     """Run unit tests"""
     print("Running unit tests")
     ctx.run("pytest tests/unit")

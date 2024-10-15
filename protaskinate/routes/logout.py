@@ -5,6 +5,7 @@ from flask_login import logout_user
 
 blueprint = Blueprint("logout", __name__)
 
+
 @blueprint.route("/logout", methods=["GET"])
 def logout_route():
     """Render the logout page"""

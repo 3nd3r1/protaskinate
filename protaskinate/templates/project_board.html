@@ -1,0 +1,147 @@
+{% from "macros.html" import task_priority_icon, csrf_token_input %}
+
+{% macro status_task_cards(project, task, status) %}
+{% for task in tasks %}
+{% if task.status.value == status %}
+<div draggable="true" class="card task">
+    <header class="card-header">
+        <p class="card-header-title" draggable="false">{{task.title}}</p>
+        <form action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}" method="POST">
+            {{csrf_token_input()}}
+            <input type="hidden" name="status" value="{{status}}">
+        </form>
+        <a class="card-header-icon" draggable="false" href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}">
+            <span class="icon">
+                <i class="fas fa-eye"></i>
+            </span>
+        </a>
+    </header>
+    <footer class="card-footer">
+        <div class="card-footer-item is-flex" style="gap: 8px" draggable="false">
+            {{ task_priority_icon(task.priority) }}
+            {{ task.priority.value.title().replace("_", " ") }}
+        </div>
+        <div class="card-footer-item is-flex" style="gap: 8px" draggable="false">
+            <i class="fas fa-user"></i>
+            {% if task.assignee_id %}
+            {{ users_dict[task.assignee_id].username }}
+            {% else %}
+            Unassigned
+            {% endif %}
+        </div>
+    </footer>
+</div>
+{% endif %}
+{% endfor %}
+{% endmacro %}
+
+{% extends "base.html" %}
+{% block title %}{{project.name}}{% endblock %}
+{% block hero_title %}{{project.name}} - Board{% endblock %}
+{% block hero_description %}Kanban board for all project tasks{% endblock %}
+{% block content %}
+<div class="columns">
+    <div class="column" data-status="open">
+        <div>
+            <h3 class="title is-4">Open</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%">
+            {{ status_task_cards(project, tasks, "open") }}
+        </div>
+    </div>
+    <div class="column" data-status="in_progress">
+        <div>
+            <h3 class="title is-4">In Progress</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%;">
+            {{ status_task_cards(project, tasks, "in_progress") }}
+        </div>
+    </div>
+    <div class="column" data-status="done">
+        <div>
+            <h3 class="title is-4">Done</h3>
+        </div>
+        <hr />
+        <div class="tasks" style="min-height: 100%">
+            {{ status_task_cards(project, tasks, "done") }}
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".task").forEach((task) => {
+            task.addEventListener("dragstart", (event) => {
+                if (!event.target.classList || !event.target.classList.contains("task")) return;
+                console.log(event.target);
+                event.dataTransfer.effectsAllowed = "move";
+                event.dataTransfer.setData("text/plain", "");
+                requestAnimationFrame(() => event.target.classList.add("dragging"));
+            });
+
+            task.addEventListener("dragend", (event) => {
+                if (!event.target.classList || !event.target.classList.contains("task")) return;
+                dragging = document.querySelector(".dragging");
+                statusColumn = dragging.closest(".column");
+                statusInput = dragging.querySelector("input[name='status']");
+
+                if (statusInput.value !== statusColumn.dataset.status) {
+                    statusInput.value = statusColumn.dataset.status;
+                    dragging.querySelector("form").submit();
+                }
+
+                requestAnimationFrame(() => event.target.classList.remove("dragging"));
+            });
+        });
+
+        document.querySelectorAll(".tasks").forEach((tasks) => {
+            tasks.addEventListener("drop", (event) => {
+                event.preventDefault();
+            });
+
+            tasks.addEventListener("dragover", (event) => {
+                const dragging = document.querySelector(".dragging");
+                const closest = event.target.closest(".task, .tasks");
+
+                if (!dragging) return;
+
+                event.preventDefault();
+
+                if (!closest || closest === dragging) return;
+
+                if (closest.classList.contains("tasks")) {
+                    const lastTask = closest.lastElementChild;
+                    if (!lastTask) {
+                        closest.appendChild(dragging);
+                    } else {
+                        const {bottom} = lastTask.getBoundingClientRect();
+                        if (event.clientY > bottom) {
+                            closest.appendChild(dragging);
+                        }
+                    }
+                } else {
+                    const {top, height} = closest.getBoundingClientRect();
+                    const distance = top + height / 2;
+
+                    if (event.clientY < distance) {
+                        closest.before(dragging);
+                    } else {
+                        closest.after(dragging);
+                    }
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .task {
+        cursor: move;
+    }
+    .task.dragging {
+        cursor: default;
+        box-shadow: none;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
