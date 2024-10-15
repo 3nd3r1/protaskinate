@@ -5,7 +5,7 @@
 {% if task.status.value == status %}
 <div draggable="true" class="card task">
     <header class="card-header">
-        <p class="card-header-title">{{task.title}}</p>
+        <p class="card-header-title" draggable="false">{{task.title}}</p>
         <form action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}" method="POST">
             {{csrf_token_input()}}
             <input type="hidden" name="status" value="{{status}}">
@@ -17,11 +17,11 @@
         </a>
     </header>
     <footer class="card-footer">
-        <div class="card-footer-item is-flex" style="gap: 8px">
+        <div class="card-footer-item is-flex" style="gap: 8px" draggable="false">
             {{ task_priority_icon(task.priority) }}
             {{ task.priority.value.title().replace("_", " ") }}
         </div>
-        <div class="card-footer-item is-flex" style="gap: 8px">
+        <div class="card-footer-item is-flex" style="gap: 8px" draggable="false">
             <i class="fas fa-user"></i>
             {% if task.assignee_id %}
             {{ users_dict[task.assignee_id].username }}
@@ -73,12 +73,15 @@
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".task").forEach((task) => {
             task.addEventListener("dragstart", (event) => {
+                if (!event.target.classList || !event.target.classList.contains("task")) return;
+                console.log(event.target);
                 event.dataTransfer.effectsAllowed = "move";
                 event.dataTransfer.setData("text/plain", "");
                 requestAnimationFrame(() => event.target.classList.add("dragging"));
             });
 
             task.addEventListener("dragend", (event) => {
+                if (!event.target.classList || !event.target.classList.contains("task")) return;
                 dragging = document.querySelector(".dragging");
                 statusColumn = dragging.closest(".column");
                 statusInput = dragging.querySelector("input[name='status']");
@@ -98,15 +101,16 @@
             });
 
             tasks.addEventListener("dragover", (event) => {
-                event.preventDefault();
-
                 const dragging = document.querySelector(".dragging");
                 const closest = event.target.closest(".task, .tasks");
+
+                if (!dragging) return;
+
+                event.preventDefault();
 
                 if (!closest || closest === dragging) return;
 
                 if (closest.classList.contains("tasks")) {
-                    console.log("tasks");
                     const lastTask = closest.lastElementChild;
                     if (!lastTask) {
                         closest.appendChild(dragging);
