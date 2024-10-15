@@ -62,6 +62,20 @@ class Repository(Generic[T]):
 
         return self._entity_creator(row) if row else None
 
+    def count(self, by_fields: Dict[str, Union[int, str]]) -> int:
+        """Get the count of entities from the repository by some fields"""
+        if any(key not in self._fields for key in by_fields):
+            raise ValueError("Invalid by_fields")
+
+        where_clause = "WHERE " + " AND ".join(f"{key} = :{key}" for key in by_fields)
+
+        sql = f"SELECT count(*) FROM {self._table_name} {where_clause}"
+
+        result = db.session.execute(text(sql), by_fields)
+        row = result.fetchone()
+
+        return int(row[0]) if row else 0
+
     def create(self, field_values: Dict[str, Union[int, str]]) -> Optional[T]:
         """Create a new entity in the repository"""
         if any(key not in self._fields for key in field_values):

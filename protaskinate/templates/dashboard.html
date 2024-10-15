@@ -3,4 +3,17 @@
 {% block hero_title %}Dashboard{% endblock %}
 {% block hero_description %}Hello {{current_user.username}}, welcome to the dashboard!{% endblock %}
 {% block content %}
+<section class="section">
+    <h3 class="title is-4">Tasks assigned to you:</h3>
+    <nav class="level">
+        {% for status in task_counts_by_status %}
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">{{status.value.replace("_","").title()}}</p>
+                <p class="title">{{task_counts_by_status[status]}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </nav>
+</section>
 {% endblock %}

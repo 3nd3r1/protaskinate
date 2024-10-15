@@ -1,8 +1,9 @@
 """protaskinate/services/task_service.py"""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from protaskinate.entities import Task
+from protaskinate.entities.task import TaskStatus
 from protaskinate.repositories import task_repository
 
 
@@ -18,6 +19,11 @@ class TaskService:
     def get_by_id_and_project(self, task_id: int, project_id: int) -> Optional[Task]:
         """Get task by ID and project"""
         return task_repository.get({"id": task_id, "project_id": project_id})
+
+    def count_by_assignee_grouped_by_status(self, assignee_id: int) -> Dict[TaskStatus, int]:
+        """Get all tasks assigned to a user grouped by status"""
+        return task_repository.count_by_assignee_grouped_by_status(assignee_id)
+
 
     def update(self, task_id: int, project_id: int, **kwargs) -> Optional[Task]:
         """Update the task"""
