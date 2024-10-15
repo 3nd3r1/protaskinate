@@ -1,4 +1,4 @@
-{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, format_datetime %}
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, format_datetime, csrf_token_input %}
 {% extends "base.html" %}
 {% block title %}{{task.title}}{% endblock %}
 {% block content %}
@@ -9,6 +9,7 @@
             <div>
                 <form method="POST" action="{{url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id)}}" class="task-delete-form">
                     {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+                    {{ csrf_token_input() }}
                     <div class="control">
                         <button class="button card-header-icon" type="submit">
                             <span class="icon">

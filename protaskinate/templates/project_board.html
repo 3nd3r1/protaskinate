@@ -1,4 +1,4 @@
-{% from "macros.html" import task_priority_icon %}
+{% from "macros.html" import task_priority_icon, csrf_token_input %}
 
 {% macro status_task_cards(project, task, status) %}
 {% for task in tasks %}
@@ -7,6 +7,7 @@
     <header class="card-header">
         <p class="card-header-title">{{task.title}}</p>
         <form action="{{url_for("project.project_task_edit_route", project_id=project.id, task_id=task.id)}}" method="POST">
+            {{csrf_token_input()}}
             <input type="hidden" name="status" value="{{status}}">
         </form>
         <a class="card-header-icon" draggable="false" href="{{ url_for("project.project_task_view_route", project_id=project.id, task_id=task.id) }}">

@@ -10,6 +10,7 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 from protaskinate.routes import dashboard, login, logout, project, register
+from protaskinate.utils.csrf import csrf
 from protaskinate.utils.database import db
 from protaskinate.utils.login_manager import lm
 
@@ -40,6 +41,7 @@ def create_app():
 
     db.init_app(app)
     lm.init_app(app)
+    csrf.init_app(app)
 
     app.cli.add_command(create_schema)
     app.cli.add_command(populate_db)

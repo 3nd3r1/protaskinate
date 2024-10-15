@@ -1,4 +1,4 @@
-{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, disable_form_if_no_write_access, format_datetime, update_project_user_role_form %}
+{% from "macros.html" import update_task_status_form, update_task_priority_form, update_task_assignee_form, update_task_deadline_form, disable_form_if_no_task_update_access, disable_form_if_no_write_access, format_datetime, update_project_user_role_form, csrf_token_input %}
 {% extends "base.html" %}
 {% block title %}{{project.name}}{% endblock %}
 {% block hero_title %}{{project.name}}{% endblock %}
@@ -84,6 +84,7 @@
                         <td class="is-align-content-center">
                             <form method="POST" class="task-delete-form" action={{ url_for("project.project_task_delete_route", project_id=project.id, task_id=task.id) }}>
                                 {{ disable_form_if_no_task_update_access(user_project_role, task, current_user) }}
+                                {{ csrf_token_input() }}
                                 <button type="submit" class="button">
                                     <span class="icon is-small">
                                         <i class="fas fa-trash"></i>
