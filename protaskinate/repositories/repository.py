@@ -70,10 +70,11 @@ class Repository(Generic[T]):
             raise ValueError("Missing required fields")
 
         fields = ", ".join(field_values.keys())
-        values = ", ".join(f":{key}" for key in field_values)
+        placeholders = ", ".join(f":{key}" for key in field_values)
         all_fields = ", ".join(self._fields)
 
-        sql = f"INSERT INTO {self._table_name} ({fields}) VALUES ({values}) RETURNING {all_fields}"
+        sql = f"""INSERT INTO {self._table_name} ({fields})
+                  VALUES ({placeholders}) RETURNING {all_fields}"""
 
         result = db.session.execute(text(sql), field_values)
         row = result.fetchone()
