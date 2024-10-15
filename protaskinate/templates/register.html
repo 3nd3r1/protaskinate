@@ -11,7 +11,7 @@
             {{ error }}
         </div>
         {% endif %}
-        <form method="POST">
+        <form method="POST" novalidate="true">
             {{ form.hidden_tag() }}
             <div class="field">
                 {{ form.username.label(class="label") }}
