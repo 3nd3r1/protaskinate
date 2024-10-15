@@ -8,6 +8,7 @@ from protaskinate.repositories import comment_repository
 
 class CommentService:
     """Comment service that interacts with the repository"""
+
     def get_all_by_task(self, task_id: int) -> List[Comment]:
         """Get all comments by task"""
         return comment_repository.get_all({"task_id": task_id})
@@ -19,5 +20,6 @@ class CommentService:
     def delete(self, comment_id: int, task_id: int) -> None:
         """Delete a comment"""
         return comment_repository.delete({"id": comment_id, "task_id": task_id})
+
 
 comment_service = CommentService()

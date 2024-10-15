@@ -8,6 +8,7 @@ from protaskinate.utils.login_manager import login_redirect
 
 blueprint = Blueprint("login", __name__)
 
+
 @blueprint.route("/login", methods=["GET", "POST"])
 @login_redirect
 def login_route():

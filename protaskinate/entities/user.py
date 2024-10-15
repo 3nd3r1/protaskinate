@@ -1,6 +1,5 @@
 """protaskinate/entities/user.py"""
 
-
 from dataclasses import dataclass
 
 from flask_login import UserMixin
@@ -9,6 +8,7 @@ from flask_login import UserMixin
 @dataclass
 class User(UserMixin):
     """Class representing a user"""
+
     id: int
     username: str
 

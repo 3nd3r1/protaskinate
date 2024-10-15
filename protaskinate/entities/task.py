@@ -10,12 +10,15 @@ from protaskinate.utils.validation import validate_enum, validate_type
 
 class TaskStatus(Enum):
     """Enumeration representing the status of a task"""
+
     OPEN = "open"
     IN_PROGRESS = "in_progress"
     DONE = "done"
 
+
 class TaskPriority(Enum):
     """Enumeration representing the priority of a task"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -43,9 +46,11 @@ class TaskPriority(Enum):
     def __ge__(self, other):
         return self.as_int() >= other.as_int()
 
+
 @dataclass
 class Task:
     """Class representing a task"""
+
     id: int
     project_id: int
     creator_id: int

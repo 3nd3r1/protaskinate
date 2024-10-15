@@ -19,15 +19,19 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 
 
 def create_app():
-    """ Create the Flask app """
+    """Create the Flask app"""
     app = Flask(__name__)
 
     # If DATABASE_URL or SECRET_KEY not set throw error
     if not os.environ.get("DATABASE_URL"):
         raise ValueError("DATABASE_URL environment variable is not set")
     if not os.environ.get("SECRET_KEY"):
-        raise ValueError(("Please generate a secret_key with "
-                          "`poetry run invoke generate-secret-key`"))
+        raise ValueError(
+            (
+                "Please generate a secret_key with "
+                "`poetry run invoke generate-secret-key`"
+            )
+        )
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
         "pool_pre_ping": True,
@@ -63,7 +67,7 @@ def create_app():
 @click.command("create_schema")
 @with_appcontext
 def create_schema():
-    """ Create the database schema """
+    """Create the database schema"""
     logging.info("Creating schema")
     with open("schema.sql", "r", encoding="utf-8") as fp:
         sql = fp.read()
@@ -77,7 +81,7 @@ def create_schema():
 @click.command("populate_db")
 @with_appcontext
 def populate_db():
-    """ Populate the database with sample data """
+    """Populate the database with sample data"""
     logging.info("Populating database")
     sql_users = """
     INSERT INTO users (username, password) VALUES
@@ -117,11 +121,14 @@ def populate_db():
     (2, 3, 'writer');
     """
 
-
     with db.engine.connect() as conn:
-        conn.execute(text(sql_users), {
-            "admin_password": generate_password_hash("admin"),
-            "user_password": generate_password_hash("user")})
+        conn.execute(
+            text(sql_users),
+            {
+                "admin_password": generate_password_hash("admin"),
+                "user_password": generate_password_hash("user"),
+            },
+        )
         conn.execute(text(sql_projects))
         conn.execute(text(sql_tasks))
         conn.execute(text(sql_comments))

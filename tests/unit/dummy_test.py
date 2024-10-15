@@ -1,4 +1,5 @@
 """tests/unit/dummy_test.py"""
+
 import unittest
 
 from protaskinate.utils.dummy import dummy

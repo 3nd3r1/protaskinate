@@ -7,6 +7,7 @@ from datetime import datetime
 @dataclass
 class Comment:
     """Class representing a comment"""
+
     id: int
     task_id: int
     creator_id: int

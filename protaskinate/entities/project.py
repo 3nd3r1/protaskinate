@@ -11,13 +11,16 @@ from protaskinate.utils.validation import validate_enum, validate_type
 
 class ProjectRole(Enum):
     """Enumeration representing the role of a user in a project"""
+
     READER = "reader"
     WRITER = "writer"
     ADMIN = "admin"
 
+
 @dataclass
 class Project:
     """Class representing a project"""
+
     id: int
     name: str
     creator_id: int
@@ -37,6 +40,7 @@ class Project:
 @dataclass
 class ProjectWithRole:
     """Class representing a project with the current user's role"""
+
     project: Project
     role: ProjectRole
 
@@ -44,9 +48,11 @@ class ProjectWithRole:
         validate_type(self.project, Project, "project")
         self.role = validate_enum(self.role, ProjectRole, "role")
 
+
 @dataclass
 class ProjectUser:
     """Class representing a user in a project"""
+
     user: User
     role: ProjectRole
 

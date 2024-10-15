@@ -1,4 +1,5 @@
 """protaskinate/routes/handlers/register_handlers.py"""
+
 from flask import flash
 from flask_login import login_user
 from protaskinate.routes.forms.register_forms import RegisterForm

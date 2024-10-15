@@ -1,4 +1,5 @@
 """protaskinate/services/user_service.py"""
+
 from typing import List, Optional
 
 from werkzeug.security import generate_password_hash
@@ -30,7 +31,9 @@ class UserService:
 
     def register(self, username: str, password: str) -> Optional[User]:
         """Register a user"""
-        return user_repository.create({"username": username,
-                                       "password": generate_password_hash(password)})
+        return user_repository.create(
+            {"username": username, "password": generate_password_hash(password)}
+        )
+
 
 user_service = UserService()
