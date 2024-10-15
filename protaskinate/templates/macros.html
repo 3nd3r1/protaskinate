@@ -106,7 +106,7 @@
 {% endmacro %}
 
 {% macro format_datetime(datetime) %}
-    <time datetime="{{ datetime.strftime("%Y-%m-%d") }}">{{ datetime.strftime("%d/%m/%Y") }}</time>
+    <time datetime="{{ datetime.isoformat() }}+00:00">{{ datetime.strftime("%Y-%m-%d") }}</time>
 {% endmacro %}
 
 {% macro nav_link(href, text) %}

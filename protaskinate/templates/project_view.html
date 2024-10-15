@@ -41,13 +41,11 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Title</th>
+                        <th style="width: 100%">Title</th>
                         <th>Status</th>
                         <th>Priority</th>
                         <th>Assignee</th>
                         <th>Deadline</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
                         <th>Created By</th>
                     </tr>
                 </thead>
@@ -66,12 +64,6 @@
                         </td>
                         <td>
                             {{ update_task_deadline_form(project, task, user_project_role, current_user) }}
-                        </td>
-                        <td class="is-align-content-center">
-                            {{ task.created_at.strftime("%d/%m/%Y") }}
-                        </td>
-                        <td class="is-align-content-center">
-                            {{ task.updated_at.strftime("%d/%m/%Y") }}
                         </td>
                         <td class="is-align-content-center">{{ users_dict[task.creator_id].username }}</td>
                         <td class="is-align-content-center">
