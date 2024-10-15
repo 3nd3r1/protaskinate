@@ -25,7 +25,7 @@
 - [x] **Project Organization**: Organize tasks within specific projects for better clarity and tracking.
 - [x] **User Roles**: Assign roles (Admin/User) with different access permissions.
 - [x] **Comments and Collaboration**: Leave comments on tasks for better communication between team members.
-- [ ] **Activity Log**: Track task updates and project changes in real time.
+- [x] **Activity Log**: Track task updates and project changes in real time.
 - [ ] **Visualization**: Easily create charts (E.g. burndown chart) to visualize your project.
 
 ## Tech Stack:
