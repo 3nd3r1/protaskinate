@@ -44,7 +44,7 @@ def lint(ctx):
 
 
 @task
-def unit_test(ctx):
+def test(ctx):
     """Run unit tests"""
     print("Running unit tests")
     ctx.run("pytest tests/unit")
