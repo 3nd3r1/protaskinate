@@ -18,12 +18,18 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - User can now assign and de-assign roles for projects user has admin access to
 - User can now create a project
 - User can now view all tasks of project user has access to in a kanban board
+- User can now view a project activity log if he has admin access to the project
+    - Activity log shows task creation, task update, task deletion, task creation and project update
+- User can view the amount of tasks assigned to the user in the dashboard
 
 ### Fixed
 
 - Important buttons are now purple to fit the color scheme
 - Page content has been divided into logical sections
 - When a project is selected, the navbar shows navigations for that project
+- Forms now show errors all at once instead of one by one
+- Added length restrictions to most fields
+- Datetimes are now displayed according to the user's timezone
 
 ## [v0.2.0-beta] - 2024-10-01
 
