@@ -197,6 +197,29 @@
                 </form>
             </div>
         </section>
+        <section class="section">
+            <div class="container">
+                <h3 class="title is-4">Activity Logs</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity_log in activity_logs %}
+                            <tr>
+                                <td>{{ users_dict[activity_log.user_id].username }}</td>
+                                <td>{{ activity_log.action.value.replace("_"," ").title() }}</td>
+                                <td>{{ format_datetime(activity_log.created_at) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     {% endif %}
     <script>
     document.addEventListener("DOMContentLoaded", function() {

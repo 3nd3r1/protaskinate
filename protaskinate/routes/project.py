@@ -14,10 +14,12 @@ from protaskinate.routes.handlers.project_handlers import (
     handle_create_project,
     handle_create_project_user,
     handle_create_task,
+    handle_delete_task,
     handle_update_task,
     handle_update_user_role,
 )
 from protaskinate.services import (
+    activity_log_service,
     comment_service,
     project_service,
     task_service,
@@ -72,6 +74,7 @@ def project_view_route(project_id: int):
     project_users = project_service.get_all_users_in_project(project_id)
     user_project_role = project_service.get_user_role(current_user.id, project_id)
     users_dict = {user.id: user for user in user_service.get_all()}
+    activity_logs = activity_log_service.get_all_by_project(project_id)
 
     return render_template(
         "project_view.html",
@@ -82,6 +85,7 @@ def project_view_route(project_id: int):
         tasks=tasks,
         project_users=project_users,
         users_dict=users_dict,
+        activity_logs=activity_logs,
     )
 
 
@@ -177,5 +181,5 @@ def project_task_edit_route(project_id: int, task_id: int):
 @task_update_access_required
 def project_task_delete_route(project_id: int, task_id: int):
     """Delete a task from a project"""
-    task_service.delete(task_id, project_id)
+    handle_delete_task(project_id, task_id)
     return redirect(url_for("project.project_view_route", project_id=project_id))

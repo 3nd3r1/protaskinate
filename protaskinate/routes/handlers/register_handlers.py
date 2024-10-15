@@ -12,7 +12,7 @@ def handle_register(form: RegisterForm) -> bool:
     password = form.password.data
 
     if not username or not password:
-        flash("Invalid username or password", "error")
+        flash("Missing username or password", "error")
         return False
 
     if user_service.get_by_username(username):

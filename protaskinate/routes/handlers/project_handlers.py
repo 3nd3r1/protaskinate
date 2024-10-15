@@ -2,10 +2,12 @@
 
 from datetime import datetime
 from typing import Dict
+import logging
 
 from flask import flash
 from flask_login import current_user
 
+from protaskinate.entities.activity_log import ActivityLogAction
 from protaskinate.entities.project import ProjectRole
 from protaskinate.routes.forms.project_forms import (
     CreateCommentForm,
@@ -13,7 +15,12 @@ from protaskinate.routes.forms.project_forms import (
     CreateProjectUserForm,
     CreateTaskForm,
 )
-from protaskinate.services import comment_service, project_service, task_service
+from protaskinate.services import (
+    activity_log_service,
+    comment_service,
+    project_service,
+    task_service,
+)
 
 
 def handle_create_project(form: CreateProjectForm):
@@ -51,7 +58,7 @@ def handle_create_task(project_id: int, form: CreateTaskForm):
         flash("You do not have write-access to this project", "error")
         return
 
-    task_service.create(
+    new_task = task_service.create(
         title=data["title"],
         status=data["status"],
         priority=data["priority"],
@@ -63,6 +70,18 @@ def handle_create_task(project_id: int, form: CreateTaskForm):
         project_id=project_id,
         description=data["description"],
     )
+    if not new_task:
+        flash("Failed to create task", "error")
+        return
+
+    new_log = activity_log_service.create_log(
+        user_id=current_user.id,
+        project_id=project_id,
+        action=ActivityLogAction.CREATE_TASK,
+    )
+    if not new_log:
+        logging.error("Failed to create activity log for task creation")
+
     form.title.data = ""
     form.assignee_id.data = 0
     form.deadline.data = None
@@ -88,7 +107,19 @@ def handle_create_project_user(project_id: int, form: CreateProjectUserForm):
         flash("User already in project", "error")
         return
 
-    project_service.add_user(project_id, data["user_id"], data["role"])
+    new_project_user = project_service.add_user(project_id, data["user_id"], data["role"])
+    if not new_project_user:
+        flash("Failed to add user to project", "error")
+        return
+
+    new_log = activity_log_service.create_log(
+        user_id=current_user.id,
+        project_id=project_id,
+        action=ActivityLogAction.UPDATE_PROJECT,
+    )
+    if not new_log:
+        logging.error("Failed to create activity log for project user addition")
+
     flash("User added to project", "success")
 
 
@@ -101,6 +132,14 @@ def handle_update_user_role(project_id: int, user_id: int, form: Dict):
         return
 
     project_service.update_user_role(project_id, user_id, role)
+
+    new_log = activity_log_service.create_log(
+        user_id=current_user.id,
+        project_id=project_id,
+        action=ActivityLogAction.UPDATE_PROJECT,
+    )
+    if not new_log:
+        logging.error("Failed to create activity log for user role update")
 
 
 def handle_create_comment(task_id: int, form: CreateCommentForm):
@@ -135,4 +174,26 @@ def handle_update_task(task_id: int, project_id: int, form: Dict):
     if "deadline" in form:
         update_data["deadline"] = form["deadline"]
 
-    task_service.update(task_id, project_id, **update_data)
+    updated_task = task_service.update(task_id, project_id, **update_data)
+    if not updated_task:
+        flash("Failed to update task", "error")
+        return
+
+    new_log = activity_log_service.create_log(
+        user_id=current_user.id,
+        project_id=project_id,
+        action=ActivityLogAction.UPDATE_TASK,
+    )
+    if not new_log:
+        logging.error("Failed to create activity log for task update")
+
+def handle_delete_task(project_id: int, task_id: int):
+    """Handle the deletion of a task"""
+    task_service.delete(task_id, project_id)
+    new_log = activity_log_service.create_log(
+        user_id=current_user.id,
+        project_id=project_id,
+        action=ActivityLogAction.DELETE_TASK,
+    )
+    if not new_log:
+        logging.error("Failed to create activity log for task deletion")

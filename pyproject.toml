@@ -16,6 +16,7 @@ click = "^8.1.7"
 gunicorn = "^23.0.0"
 flask-wtf = "^1.2.1"
 flask-login = "^0.6.3"
+typing-extensions = "^4.12.2"
 
 
 [tool.poetry.group.dev.dependencies]
