@@ -21,6 +21,10 @@
     <a href="https://github.com/3nd3r1/protaskinate/releases/latest">Latest Release</a>
 </p>
 
+## Preview
+
+![preview](./docs/preview.png)
+
 ## Key Features:
 - [x] **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
 - [x] **Kanban Board**: Visualize and manage tasks across different stages (To Do, In Progress, Done).
