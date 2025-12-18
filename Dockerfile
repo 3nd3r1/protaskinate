@@ -1,0 +1,15 @@
+FROM library/python:3.10-alpine
+
+RUN apk add build-base libpq-dev python3-dev
+RUN pip install --no-cache --upgrade poetry
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY ./ /usr/src/app
+
+RUN poetry install --without dev
+
+EXPOSE 80
+
+CMD poetry run gunicorn -w 4 'protaskinate.app:create_app()' --bind 0.0.0.0:80
