@@ -1,4 +1,6 @@
-<h1 align="center">ProTaskinate</h1>
+<p align="center">
+     <img src="./docs/protaskinate.png"/> 
+</p>
 
 <p align="center">
     <a href="https://codecov.io/gh/3nd3r1/protaskinate" > 
@@ -18,6 +20,10 @@
     .
     <a href="https://github.com/3nd3r1/protaskinate/releases/latest">Latest Release</a>
 </p>
+
+## Preview
+
+![preview](./docs/preview.png)
 
 ## Key Features:
 - [x] **Task Management**: Create, assign, and track tasks with due dates, priorities, and progress statuses.
@@ -88,6 +94,13 @@ Addressing some of the feedback in labtool:
 The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
 
 More info about updates in the [changelog](docs/changelog.md).
+
+Here are some credentials for testing:
+
+```
+admin:admin
+user:user
+```
 
 ### Välipalautus 3 - 2024-10-1
 
