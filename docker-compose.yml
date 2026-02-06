@@ -1,7 +1,7 @@
 ---
 services:
   app:
-    image: python:3.10
+    image: python:3.12
     container_name: protaskinate-app
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/protaskinate
