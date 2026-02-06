@@ -5,7 +5,7 @@ on: push
 jobs:
   ci:
     runs-on: ubuntu-latest
-    container: python:3.10
+    container: python:3.12
 
     steps:
       - name: Check out repository code
