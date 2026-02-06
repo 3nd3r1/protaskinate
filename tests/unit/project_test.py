@@ -81,7 +81,7 @@ class TestProjectService(unittest.TestCase):
             user=User(id=1, username="test_user"), role=ProjectRole.ADMIN
         )
 
-    @patch("protaskinate.repositories.project_repository.get_all")
+    @patch("protaskinate.services.project_service.project_repository.get_all")
     def test_get_all_projects(self, mock_get_all):
         """Test get all projects method."""
         mock_get_all.return_value = [self.project]
@@ -92,7 +92,7 @@ class TestProjectService(unittest.TestCase):
         self.assertEqual(projects[0], self.project)
 
     @patch(
-        "protaskinate.repositories.project_repository.get_all_by_user_and_roles_with_role"
+        "protaskinate.services.project_service.project_repository.get_all_by_user_and_roles_with_role"
     )
     def test_get_all_by_user_with_role(self, mock_get_all_by_user):
         """Test fetching projects by user with specific roles."""
@@ -107,7 +107,7 @@ class TestProjectService(unittest.TestCase):
             user_id, [ProjectRole.READER, ProjectRole.WRITER, ProjectRole.ADMIN]
         )
 
-    @patch("protaskinate.repositories.project_repository.get")
+    @patch("protaskinate.services.project_service.project_repository.get")
     def test_get_project_by_id(self, mock_get):
         """Test get project by ID."""
         project_id = 1
@@ -118,14 +118,14 @@ class TestProjectService(unittest.TestCase):
         self.assertEqual(project, self.project)
         mock_get.assert_called_with({"id": project_id})
 
-    @patch("protaskinate.repositories.project_repository.delete")
+    @patch("protaskinate.services.project_service.project_repository.delete")
     def test_delete_project(self, mock_delete):
         """Test delete project."""
         project_id = 1
         self.project_service.delete(project_id)
         mock_delete.assert_called_with({"id": project_id})
 
-    @patch("protaskinate.repositories.project_repository.create")
+    @patch("protaskinate.services.project_service.project_repository.create")
     def test_create_project(self, mock_create):
         """Test creating a project."""
         project_data = {
@@ -142,7 +142,7 @@ class TestProjectService(unittest.TestCase):
         self.assertEqual(project, Project(**project_data))
         mock_create.assert_called_with(project_data)
 
-    @patch("protaskinate.repositories.project_repository.create_project_user")
+    @patch("protaskinate.services.project_service.project_repository.create_project_user")
     def test_add_user_to_project(self, mock_create_user):
         """Test adding user to project."""
         project_id, user_id, role = 1, 1, ProjectRole.ADMIN

@@ -155,7 +155,7 @@ class TestTaskService(unittest.TestCase):
             updated_at=datetime.now(),
         )
 
-    @patch("protaskinate.repositories.task_repository.get_all")
+    @patch("protaskinate.services.task_service.task_repository.get_all")
     def test_get_all_by_project(self, mock_get_all):
         """Test the get_all_by_project method"""
         mock_get_all.return_value = [self.task]
@@ -163,7 +163,7 @@ class TestTaskService(unittest.TestCase):
         self.assertEqual(len(tasks), 1)
         self.assertEqual(tasks[0].title, "Sample Task")
 
-    @patch("protaskinate.repositories.task_repository.get")
+    @patch("protaskinate.services.task_service.task_repository.get")
     def test_get_by_id_and_project(self, mock_get):
         """Test the get_by_id_and_project method"""
         mock_get.return_value = self.task
@@ -173,7 +173,7 @@ class TestTaskService(unittest.TestCase):
             self.assertEqual(task.id, 1)
             self.assertEqual(task.title, "Sample Task")
 
-    @patch("protaskinate.repositories.task_repository.update")
+    @patch("protaskinate.services.task_service.task_repository.update")
     def test_update(self, mock_update):
         """Test the update method"""
         new_title = "Updated Task"
@@ -183,7 +183,7 @@ class TestTaskService(unittest.TestCase):
 
         mock_update.assert_called_with({"id": 1, "project_id": 1}, {"title": new_title})
 
-    @patch("protaskinate.repositories.task_repository.create")
+    @patch("protaskinate.services.task_service.task_repository.create")
     def test_create(self, mock_create):
         """Test the create method"""
         mock_create.return_value = self.task
@@ -195,14 +195,14 @@ class TestTaskService(unittest.TestCase):
         )
         self.assertEqual(created_task, self.task)
 
-    @patch("protaskinate.repositories.task_repository.delete")
+    @patch("protaskinate.services.task_service.task_repository.delete")
     def test_delete(self, mock_delete):
         """Test the delete method"""
         self.task_service.delete(task_id=1, project_id=1)
         mock_delete.assert_called_with({"id": 1, "project_id": 1})
 
     @patch(
-        "protaskinate.repositories.task_repository.count_by_assignee_grouped_by_status"
+        "protaskinate.services.task_service.task_repository.count_by_assignee_grouped_by_status"
     )
     def test_count_by_assignee_grouped_by_status(
         self, mock_count_by_assignee_grouped_by_status
