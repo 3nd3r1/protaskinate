@@ -8,6 +8,7 @@ from protaskinate.services import user_service
 
 lm = LoginManager()
 lm.login_view = "login.login_route"  # type: ignore
+lm.login_message = None
 
 
 def login_redirect(f):
