@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-    <a href="https://protaskinate-page.host.ender.fi/">Live Demo</a>
+    <a href="https://protaskinate.eros.ender.fi/">Live Demo</a>
     .
     <a href="https://github.com/3nd3r1/protaskinate/releases/latest">Latest Release</a>
 </p>
@@ -91,7 +91,7 @@ Addressing some of the feedback in labtool:
 - I added a COUNT query to the dashboard, but I am not sure if that is enough. I couldn't think of any other aggregates that would be useful.
 - I removed all HTML5 client-side validation so all the errors are displayed at once. However, I don't think disabling client-side validation is a good idea, since it will add more load to the server.
 
-The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+The project is available in production on [protaskinate.eros.ender.fi](https://protaskinate.eros.ender.fi/).
 
 More info about updates in the [changelog](docs/changelog.md).
 
@@ -106,13 +106,13 @@ user:user
 
 The project is almost finished. The project still has good code structure and clean code. Many more features have been implemented, but some are still left. Test coverage is still very poor.
 
-The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+The project is available in production on [protaskinate.eros.ender.fi](https://protaskinate.eros.ender.fi/).
 
 More info in the [changelog](docs/changelog.md).
 
 ### Välipalautus 2 - 2024-09-17
 
-The project is progressing well. Testing has not yet been started so the coverage is poor. The project has a good structure and the code is clean. Many core features have been completed, more information can be found in the [changelog](docs/changelog.md). The project is available in production on [protaskinate-page.host.ender.fi](https://protaskinate-page.host.ender.fi/).
+The project is progressing well. Testing has not yet been started so the coverage is poor. The project has a good structure and the code is clean. Many core features have been completed, more information can be found in the [changelog](docs/changelog.md). The project is available in production on [protaskinate.eros.ender.fi](https://protaskinate.eros.ender.fi/).
 
 For testing you can use the following credentials:
 - Username: admin
