@@ -1,6 +1,6 @@
-FROM library/python:3.10-alpine
+FROM library/python:3.12-alpine
 
-RUN apk add build-base libpq-dev python3-dev
+RUN apk add build-base libpq-dev
 RUN pip install --no-cache --upgrade poetry
 RUN mkdir -p /usr/src/app
 
